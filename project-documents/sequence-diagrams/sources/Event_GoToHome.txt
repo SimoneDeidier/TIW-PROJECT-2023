@@ -1,0 +1,15 @@
+title Event: GoToHome
+activate Servlet
+activate GoToHome
+note over Servlet:Servlets that can call GoToHome\nare: CheckLogin, CreateCategory\nand InsertCopiedCategory.
+Servlet->GoToHome:redirect
+deactivate Servlet
+activate CategoriesDAO
+GoToHome->CategoriesDAO:new CategoriesDAO()
+GoToHome->CategoriesDAO:findAllCategories()
+CategoriesDAO->GoToHome:allCategories
+activate ctx
+activate Template Engine
+note over GoToHome,Template Engine:Da rivedere dopo che abbiamo visto il video su Thymeleaf!!!
+GoToHome->ctx:setVariable(allCategories)
+GoToHome->Template Engine:process(ctx, "Home.html", ..)

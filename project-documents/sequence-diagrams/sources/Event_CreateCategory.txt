@@ -1,0 +1,14 @@
+title Event: CreateCategory
+
+activate Home
+activate CreateCategory
+note over Home:POST\n/CreateCategory\nname\nparentID
+Home->CreateCategory:doPOST
+deactivate Home
+activate CategoriesDAO
+CreateCategory->CategoriesDAO:new CategoriesDAO()
+CreateCategory->CategoriesDAO:createCategory(name, parentID)
+deactivate CategoriesDAO
+activate GoToHome
+CreateCategory->GoToHome:redirect
+deactivate CreateCategory

@@ -1,0 +1,15 @@
+title Event: InsertCopiedCategory
+
+activate CopyHerePage
+activate InsertCopiedCategory
+note over CopyHerePage:POST\n/InsertCopiedCategory\ncategoryID\nparentID
+CopyHerePage->InsertCopiedCategory:doPOST
+activate CategoriesDAO
+InsertCopiedCategory->CategoriesDAO:new CategoriesDAO()
+InsertCopiedCategory->CategoriesDAO:getNumberOfChildren(categoryID)
+CategoriesDAO->InsertCopiedCategory:numberOfChildren
+InsertCopiedCategory->CategoriesDAO:                [numberOfChlidren < 9]\ninsertCopiedCategory(categoryID, parentID)
+deactivate CategoriesDAO
+note over InsertCopiedCategory:Dobbiamo decidere cosa fare\nnel caso in cui ritorna >= 9!!!
+activate GoToHome
+InsertCopiedCategory->GoToHome:redirect

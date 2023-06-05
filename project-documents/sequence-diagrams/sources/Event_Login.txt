@@ -1,0 +1,17 @@
+title Event: Login
+
+activate index.html
+activate CheckLogin
+note over index.html:POST\n/Login\nusername\npassword
+index.html->CheckLogin:  doPOST
+activate UserDAO
+CheckLogin->UserDAO:new UserDAO()
+CheckLogin->UserDAO:checkLogin(username, password)
+UserDAO->CheckLogin:username || null
+deactivate UserDAO
+CheckLogin->index.html:[username == null] redirect
+activate Session
+CheckLogin->Session:[username != null] setAttribute("username" : username)
+activate GoToHome
+CheckLogin->GoToHome:redirect
+deactivate CheckLogin

@@ -1,0 +1,13 @@
+title Event: Logout
+
+activate Home
+activate Logout
+note over Home:POST\n/Logout
+Home->Logout:doPOST
+deactivate Home
+activate Session
+Logout->Session:invalidate()
+deactivate Session
+activate index.html
+Logout->index.html:redirect
+deactivate Logout
