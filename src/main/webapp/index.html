@@ -1,16 +1,23 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Login page</title>
-</head>
-<body>
-	<h1>Please, login to access the Homepage!</h1>
-	<form action="CheckLogin"
-		method="POST">
-		username: <input type="text" name="username" required> <br>
-		password: <input type="password" name="password" required><br> <input
-			type="submit" value="login">
-	</form>
-</body>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Login page</title>
+	</head>
+	<body>
+		<h1>Please, login to access the Homepage!</h1>
+		<p th:text="${loginError}"></p>
+		<form action="CheckLogin" method="POST">
+			username: <input type="text" name="username" required><br>
+			password: <input type="password" name="password" required><br>
+			<input type="submit" value="login">
+		</form>
+		<h2>You are not registered? Register here:</h2>
+		<p th:text="${registrationError}"></p>
+		<form action="RegisterNewUser" method="POST">
+			username: <input type="text" name="username" required><br>
+			password: <input type="password" name="password" required><br>
+			<input type="submit" value="register">
+		</form>
+	</body>
 </html>

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import it.polimi.tiw.beans.User;
 
@@ -32,5 +33,25 @@ public class UserDAO {
 			return user;
 		}
 	}
+	
+	public boolean registerNewUser(String username, String password) throws SQLException {
+		String query = "INSERT INTO User VALUES (?, ?)";
+		PreparedStatement preparedStatement = connection.prepareStatement(query);
+		
+		Statement statement = connection.createStatement();
+		ResultSet result = statement.executeQuery("SELECT username FROM User");
+		if(result.isBeforeFirst()) {
+			while(result.next()) {
+				if(username == result.getString("username")) {
+					return false;
+				}
+			}
+		}
+		preparedStatement.setString(1, username);
+		preparedStatement.setString(2, password);
+		preparedStatement.executeUpdate();
+		return true;
+	}
+	
 
 }

@@ -14,6 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
 import it.polimi.tiw.DAO.CategoriesDAO;
 import it.polimi.tiw.beans.Category;
 
@@ -23,7 +28,8 @@ import it.polimi.tiw.beans.Category;
 @WebServlet("/GoToHome")
 public class GoToHome extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection;
+	private Connection connection = null;
+	private TemplateEngine templateEngine;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -49,38 +55,12 @@ public class GoToHome extends HttpServlet {
 			throw new UnavailableException("Couldn't get db connection");
 		}
     	
-    	CategoriesDAO dao = new CategoriesDAO(connection);
-    	List<Category> list = null;
-		try {
-			list = dao.findAllCategories();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	for(Category c : list) {
-    		System.out.println(c.getCategoryID() + " - " + c.getName() + " - " + c.getParentID());
-    	}
-    	
-    	System.out.println("\n\n\n\n");
-    	
-    	try {
-			dao.createCategory("CREATA DAL DAO2", 21);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-		try {
-			list = dao.findAllCategories();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	for(Category c : list) {
-    		System.out.println(c.getCategoryID() + " - " + c.getName() + " - " + c.getParentID());
-    	}
+    	ServletContext servletContext = getServletContext();
+		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
+		templateResolver.setTemplateMode(TemplateMode.HTML);
+		this.templateEngine = new TemplateEngine();
+		this.templateEngine.setTemplateResolver(templateResolver);
+		templateResolver.setSuffix(".html");
     	
     }
 
@@ -88,8 +68,29 @@ public class GoToHome extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		CategoriesDAO dao = new CategoriesDAO(connection);
+		String homePath = "/WEB-INF/Home.html";
+		ServletContext servletContext = getServletContext();
+		
+    	List<Category> list = null;
+		try {
+			list = dao.findAllCategories();
+		}
+		catch (SQLException e) {
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("categoriesError", "An errorr ocurred whith the database connection!");
+			templateEngine.process(homePath, webContext, response.getWriter());
+			return;
+		}
+		
+		// DEBUG
+		for(Category category : list) {
+			System.out.println(category.getCategoryID() + " - " + category.getName());
+		}
+		
+		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		webContext.setVariable("categoryList", list);
+		templateEngine.process(homePath, webContext, response.getWriter());
 	}
 
 	/**
