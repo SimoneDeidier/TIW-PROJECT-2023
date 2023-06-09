@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -82,14 +83,16 @@ public class GoToHome extends HttpServlet {
 			templateEngine.process(homePath, webContext, response.getWriter());
 			return;
 		}
-		
-		// DEBUG
+		List<String> toShowList = new ArrayList<>();
+		List<Integer> idList = new ArrayList<>();
 		for(Category category : list) {
-			System.out.println(category.getCategoryID() + " - " + category.getName());
+			toShowList.add(category.getCategoryID() + " - " + category.getName());
+			idList.add(category.getCategoryID());
 		}
 		
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("categoryList", list);
+		webContext.setVariable("stringList", toShowList);
+		webContext.setVariable("idList", idList);
 		templateEngine.process(homePath, webContext, response.getWriter());
 	}
 
