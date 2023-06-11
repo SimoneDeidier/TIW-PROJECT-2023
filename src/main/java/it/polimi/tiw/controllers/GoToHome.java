@@ -69,13 +69,13 @@ public class GoToHome extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		CategoriesDAO dao = new CategoriesDAO(connection);
 		String homePath = "/WEB-INF/Home.html";
 		ServletContext servletContext = getServletContext();
 		
+		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
     	List<Category> list = null;
 		try {
-			list = dao.findAllCategories();
+			list = categoriesDAO.findAllCategories();
 		}
 		catch (SQLException e) {
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
@@ -83,16 +83,17 @@ public class GoToHome extends HttpServlet {
 			templateEngine.process(homePath, webContext, response.getWriter());
 			return;
 		}
-		List<String> toShowList = new ArrayList<>();
-		List<Integer> idList = new ArrayList<>();
+		List<String> idList = new ArrayList<>();
+		idList.add("root");
 		for(Category category : list) {
-			toShowList.add(category.getCategoryID() + " - " + category.getName());
-			idList.add(category.getCategoryID());
+			idList.add(Integer.toString(category.getCategoryID()));
 		}
 		
+		String userName = (String) request.getSession().getAttribute("username");
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("stringList", toShowList);
+		webContext.setVariable("categoryList", list);
 		webContext.setVariable("idList", idList);
+		webContext.setVariable("user", userName);
 		templateEngine.process(homePath, webContext, response.getWriter());
 	}
 

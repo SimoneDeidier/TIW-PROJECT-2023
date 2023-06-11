@@ -10,9 +10,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import Exceptions.AlreadyTooManyChildrenException;
-import Exceptions.InvalidParameterException;
 import it.polimi.tiw.beans.Category;
+import it.polimi.tiw.exceptions.AlreadyTooManyChildrenException;
+import it.polimi.tiw.exceptions.InvalidParameterException;
 
 public class CategoriesDAO {
 	private Connection connection;
@@ -52,10 +52,13 @@ public class CategoriesDAO {
 			categoriesIndexesList.add(category.getCategoryID());
 		}
 		int ninthChildren = Integer.parseInt(Integer.toString(parentID) + "9");
+		System.out.println("NINTH CHILDREN: " + ninthChildren);
 		if(!categoriesIndexesList.contains(parentID) || categoriesIndexesList.contains(ninthChildren)) {
+			System.out.println("ERRORE");
 			return false;
 		}
 		int newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
+		System.out.println("NEW ID: " + newCategoryID);
 		preparedStatement.setInt(1, newCategoryID);
 		preparedStatement.setString(2, name);
 		preparedStatement.setInt(3, parentID);

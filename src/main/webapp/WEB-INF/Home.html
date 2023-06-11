@@ -5,21 +5,23 @@
 		<title>Homepage</title>
 	</head>
 	<body>
-		<h1>Welcome to the homepage!</h1>
+		<h1 th:text="${'Welcome to your homepage, ' + user + '!'}">Welcome to the homepage!</h1>
+		<p><a th:href="@{/Logout}">Log out</a> from your profile.</p>
 		<h3>All your categories:</h3>
 		<p th:text="${categoriesError}"></p>
-		<div th:each="string : ${stringList}" >
-				<span th:text="${string}">
-					There are no categories to show. Please create a new one with the form below!
-				</span>
-		</div>
+		<ul>
+			<li th:each="category : ${categoryList}"
+				th:text="${category.categoryID + ' - ' + category.name}">
+				There are no categories to show, please create a new one with the form below!"
+			</li>
+		</ul>
 		<h3>Insert a new category:</h3>
-		<form action="/GoToHome" method="POST">
+		<form th:action="@{/CreateCategory}" method="POST">
 			Parent ID: 
-			<select required>
-			<option th:each="id : ${idList}" th:value="${id}" th:text="${id}"></option>
+			<select name="parentID" required>
+				<option th:each="id : ${idList}" th:value="${id}" th:text="${id}"></option>
 			</select><br>
-			Category name: <input type="text" required><br>
+			Category name: <input type="text" name="name" required><br>
 			<input type="submit" name="Create category">
 		</form>
 	</body>
