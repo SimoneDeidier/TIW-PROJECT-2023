@@ -97,7 +97,6 @@ public class CheckLogin extends HttpServlet {
 			templateEngine.process(loginPagePath, webContext, response.getWriter());
 			return;
 		}
-		String gotToHomePath = getServletContext().getContextPath() + "/GoToHome";
 		if(user == null) {
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 			webContext.setVariable("loginError", "Username or password inserted aren't correct, please refill the form!");

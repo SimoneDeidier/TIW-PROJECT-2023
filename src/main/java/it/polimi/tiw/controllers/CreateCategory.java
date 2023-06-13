@@ -81,9 +81,8 @@ public class CreateCategory extends HttpServlet {
 		ServletContext servletContext = getServletContext();
 		
 		if(parentIDString == null || parentIDString.isEmpty() || nameString == null || nameString.isEmpty()) {
-			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("categoriesError", "PARAMETRO VUOTO");
-			templateEngine.process(homePath, webContext, response.getWriter());
+			request.setAttribute("errorMessage", "An empty parameter was inserted, please refill the form with all the parameters!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
 		int parentID = 0;
@@ -92,9 +91,8 @@ public class CreateCategory extends HttpServlet {
 				parentID = Integer.parseInt(parentIDString);
 			}
 			catch (NumberFormatException e) {
-				final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-				webContext.setVariable("categoriesError", "NON UN INT!");
-				templateEngine.process(homePath, webContext, response.getWriter());
+				request.setAttribute("errorMessage", "Parent ID's format is not acceptable, please refill the form!");
+				servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 				return;
 			}
 		}
@@ -104,15 +102,13 @@ public class CreateCategory extends HttpServlet {
 			creationOk = categoriesDAO.createCategory(nameString, parentID);
 		}
 		catch (SQLException e) {
-			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("categoriesError", "ECCEZINE SQL");
-			templateEngine.process(homePath, webContext, response.getWriter());
+			request.setAttribute("errorMessage", "An errorr ocurred whith the database connection!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
 		if(!creationOk) {
-			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("categoriesError", "ERRORE NELLA CREAZIONE");
-			templateEngine.process(homePath, webContext, response.getWriter());
+			request.setAttribute("errorMessage", "An errorr ocurred whith the creation of the new category, please remember that a category may have a maximum of nine childrens!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
 		response.sendRedirect(getServletContext().getContextPath() + "/GoToHome");

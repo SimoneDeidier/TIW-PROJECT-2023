@@ -48,18 +48,23 @@ public class CategoriesDAO {
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		List<Category> categoriesList = findAllCategories();
 		List<Integer> categoriesIndexesList = new ArrayList<>();
-		for(Category category : categoriesList) {
-			categoriesIndexesList.add(category.getCategoryID());
+		if(categoriesList != null) {
+			for(Category category : categoriesList) {
+				categoriesIndexesList.add(category.getCategoryID());
+			}
+			int ninthChildren = Integer.parseInt(Integer.toString(parentID) + "9");
+			if(!categoriesIndexesList.contains(parentID) || categoriesIndexesList.contains(ninthChildren)) {
+				return false;
+			}
+			int newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
+			// TODO sam manca quando parentID è 0 ovvero il tizio sceglie root
+			preparedStatement.setInt(1, newCategoryID);
+			preparedStatement.setString(2, name);
+			preparedStatement.setInt(3, parentID);
+			preparedStatement.executeUpdate();
+			return true;
 		}
-		int ninthChildren = Integer.parseInt(Integer.toString(parentID) + "9");
-		System.out.println("NINTH CHILDREN: " + ninthChildren);
-		if(!categoriesIndexesList.contains(parentID) || categoriesIndexesList.contains(ninthChildren)) {
-			System.out.println("ERRORE");
-			return false;
-		}
-		int newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
-		System.out.println("NEW ID: " + newCategoryID);
-		preparedStatement.setInt(1, newCategoryID);
+		preparedStatement.setInt(1, 1);
 		preparedStatement.setString(2, name);
 		preparedStatement.setInt(3, parentID);
 		preparedStatement.executeUpdate();

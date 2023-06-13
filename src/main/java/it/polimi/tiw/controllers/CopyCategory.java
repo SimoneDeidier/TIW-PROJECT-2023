@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
@@ -24,10 +22,10 @@ import it.polimi.tiw.DAO.CategoriesDAO;
 import it.polimi.tiw.beans.Category;
 
 /**
- * Servlet implementation class GoToHome
+ * Servlet implementation class CopyCategory
  */
-@WebServlet("/GoToHome")
-public class GoToHome extends HttpServlet {
+@WebServlet("/CopyCategory")
+public class CopyCategory extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
@@ -35,7 +33,7 @@ public class GoToHome extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public GoToHome() {
+    public CopyCategory() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -69,40 +67,26 @@ public class GoToHome extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String homePath = "/WEB-INF/Home.html";
-		ServletContext servletContext = getServletContext();
+		String parentIDString = request.getParameter("parentID");
 		
-		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
-    	List<Category> list = null;
+		if(parentIDString == null || parentIDString.isEmpty()) {
+			// TODO error
+		}
+		int parentID = 0;
 		try {
-			list = categoriesDAO.findAllCategories();
+			parentID = Integer.parseInt(parentIDString);
 		}
-		catch (SQLException e) {
-			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("categoriesError", "An errorr ocurred whith the database connection!");
-			templateEngine.process(homePath, webContext, response.getWriter());
-			return;
+		catch (NumberFormatException e) {
+			// TODO: handle exception
 		}
-		
-		List<String> idList = new ArrayList<>();
-		idList.add("root");
-		if(list != null) {
-			for(Category category : list) {
-				idList.add(Integer.toString(category.getCategoryID()));
-			}
+		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
+		List<Category> categoriesList = null;
+		try {
+			categoriesList = categoriesDAO.findAllCategories();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 		}
 		
-		String userName = (String) request.getSession().getAttribute("username");
-		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		String errorMessage = (String) request.getAttribute("errorMessage");
-		if(errorMessage != null && !errorMessage.isEmpty()) {
-			webContext.setVariable("categoriesError", errorMessage);
-		}
-		webContext.setVariable("categoryList", list);
-		webContext.setVariable("idList", idList);
-		webContext.setVariable("user", userName);
-		webContext.setVariable("copyLink", true);
-		templateEngine.process(homePath, webContext, response.getWriter());
 	}
 
 	/**

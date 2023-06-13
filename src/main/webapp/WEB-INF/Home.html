@@ -9,12 +9,16 @@
 		<p><a th:href="@{/Logout}">Log out</a> from your profile.</p>
 		<h3>All your categories:</h3>
 		<p th:text="${categoriesError}"></p>
-		<ul>
-			<li th:each="category : ${categoryList}"
-				th:text="${category.categoryID + ' - ' + category.name}">
-				There are no categories to show, please create a new one with the form below!"
-			</li>
-		</ul>
+		<div th:each="category : ${categoryList}">
+			<span th:text="${category.categoryID + ' - ' + category.name + ' - '}">XXX - Generic category - </span>
+			<a href="Home.html" th:if="${copyLink}"
+				th:href="@{/CopyCategory(parentID=${category.categoryID})}">
+				copy
+			</a>
+		</div>
+		<p th:if="${#lists.isEmpty(categoryList)}">
+			There are no categories to show, please create a new one with the form below!
+		</p>
 		<h3>Insert a new category:</h3>
 		<form th:action="@{/CreateCategory}" method="POST">
 			Parent ID: 
