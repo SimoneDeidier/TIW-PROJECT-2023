@@ -6,7 +6,6 @@
 	</head>
 	<body>
 		<h1 th:text="${'Welcome to your homepage, ' + user + '!'}">Welcome to the homepage!</h1>
-		<p><a th:href="@{/Logout}">Log out</a> from your profile.</p>
 		<h3>All your categories:</h3>
 		<p th:text="${categoriesError}"></p>
 		<a href="Home.html" th:if="${not copyLink}"
@@ -27,8 +26,8 @@
 		<p th:if="${#lists.isEmpty(categoryList)}">
 			There are no categories to show, please create a new one with the form below!
 		</p>
-		<h3>Insert a new category:</h3>
-		<form th:action="@{/CreateCategory}" method="POST">
+		<h3 th:if="${copyLink}">Insert a new category:</h3>
+		<form th:if="${copyLink}" th:action="@{/CreateCategory}" method="POST">
 			Parent ID: 
 			<select name="parentID" required>
 				<option th:each="id : ${idList}" th:value="${id}" th:text="${id}"></option>
@@ -36,5 +35,6 @@
 			Category name: <input type="text" name="name" required><br>
 			<input type="submit" name="Create category">
 		</form>
+		<p><a th:href="@{/Logout}">Log out</a> from your profile.</p>
 	</body>
 </html>

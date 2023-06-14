@@ -76,7 +76,7 @@ public class CopyCategory extends HttpServlet {
 		String userName = (String) request.getSession().getAttribute("username");
 		
 		if(parentIDString == null || parentIDString.isEmpty()) {
-			request.setAttribute("errorMessage", "An empty parameter was inserted, please refill the form with all the parameters!");
+			request.setAttribute("errorMessage", "An empty parameter was inserted, please select another category!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
@@ -85,21 +85,22 @@ public class CopyCategory extends HttpServlet {
 			parentID = Integer.parseInt(parentIDString);
 		}
 		catch (NumberFormatException e) {
-			request.setAttribute("errorMessage", "Parent ID's format is not acceptable, please refill the form!");
+			request.setAttribute("errorMessage", "Parent ID's format is not acceptable, please select another category!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
 		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
+		boolean parameterOK;
 		List<Category> categoriesList = null;
-		try {
-			categoriesList = categoriesDAO.findAllCategories();
-		} catch (SQLException e) {
-			request.setAttribute("errorMessage", "An errorr ocurred whith the database connection!");
-			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
-			return;
-		}
 		List<Category> toCopyList = null;
 		try {
+			parameterOK = categoriesDAO.checkExistingCategoryFromID(parentID);
+			if(!parameterOK) {
+				request.setAttribute("errorMessage", "Wrong parent ID in the query string, please select another category!");
+				servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
+				return;	
+			}
+			categoriesList = categoriesDAO.findAllCategories();
 			toCopyList = categoriesDAO.toCopyList(parentID);
 		}
 		catch (SQLException e) {
@@ -124,10 +125,6 @@ public class CopyCategory extends HttpServlet {
 		}
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		webContext.setVariable("user", userName);
-		/*for(Category category : copyHereLinkMap.keySet()) {
-			System.out.println(category.getCategoryID() + " - " + copyHereLinkMap.get(category));
-		}*/
-		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		webContext.setVariable("categoryList", categoriesList);
 		webContext.setVariable("isToCopyMap", isToCopyMap);
 		webContext.setVariable("copyLink", false);
@@ -143,6 +140,17 @@ public class CopyCategory extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+	}
+	
+	public void destroy() {
+		if(connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

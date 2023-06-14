@@ -84,27 +84,15 @@ public class CategoriesDAO {
 	}
 	
 	
-	/*  public List<Category> findSubCategories(int categoryID) throws SQLException { //also contains the element we're looking for the sub categories for
-		List<Category> categoryList=findAllCategories();
-		int lastChildrenID= findLastChildrenID(categoryList,categoryID);
-		int previousLastChildrenID=lastChildrenID;
-		while(lastChildrenID!=0) {
-			previousLastChildrenID=lastChildrenID;
-			lastChildrenID= findLastChildrenID(categoryList,lastChildrenID);
+	public boolean checkExistingCategoryFromID(int categoryID) throws SQLException {
+		List<Category> categories = findAllCategories();
+		for(Category category : categories) {
+			if(category.getCategoryID() == categoryID) {
+				return true;
+			}
 		}
-		List<Category> subCategoriesList=new ArrayList<>();
-		boolean check=false;
-		for(Category category:categoryList) {
-			if(category.getCategoryID()==categoryID)
-				check=true;
-			if(check)
-				subCategoriesList.add(category);
-			if(category.getCategoryID()==previousLastChildrenID || previousLastChildrenID==0)
-				check=false;
-		}
-		return subCategoriesList; //returns only the category corresponding to categoryID if it doesn't have any subCategories
-		
-	}*/
+		return false;
+	}
 	
 	public List<Category> findSubCategories(int categoryID) throws SQLException {
 		List<Category> resultCategories = new ArrayList<>();
@@ -132,47 +120,45 @@ public class CategoriesDAO {
 	public void insertCopiedCategory(int categoryID,int parentID) throws AlreadyTooManyChildrenException, InvalidParameterException, SQLException { 
 		List<Category> categoriesList = findAllCategories();
 		List<Integer> categoriesIndexesList = new ArrayList<>();
+		
 		for(Category category : categoriesList) {
 			categoriesIndexesList.add(category.getCategoryID());
 		}
-		if(!categoriesIndexesList.contains(categoryID) || !categoriesIndexesList.contains(parentID))
+		if(!categoriesIndexesList.contains(categoryID) || (parentID != 0 && !categoriesIndexesList.contains(parentID))) {
 			throw new InvalidParameterException();
-		int lastChildrenOfParentRightNow=findLastChildrenID(categoriesList,parentID);
-		if(lastChildrenOfParentRightNow%10==9)
-			throw new AlreadyTooManyChildrenException();
+		}
 		
-		List<Category> subCategories=findSubCategories(categoryID);
-		int newIDForCategoryID;
-		if(lastChildrenOfParentRightNow!=0)
-			newIDForCategoryID=lastChildrenOfParentRightNow+1;
-		else
-			newIDForCategoryID= (parentID*10) +1;
+		int lastChildrenOfRoot = findLastChildrenID(categoriesList, parentID);
+		if(lastChildrenOfRoot % 10 == 9) {
+			throw new AlreadyTooManyChildrenException();
+		}
+		
+		List<Category> subCategories = toCopyList(categoryID);
+		int newRootID;
+		if(lastChildrenOfRoot != 0) {
+			newRootID = lastChildrenOfRoot + 1;
+		}
+		else {
+			newRootID = (parentID*10) + 1;
+		}
 		
 		connection.setAutoCommit(false); // disable autocommit
 		try{
-			for(Category category:subCategories) {
-			if(category.getCategoryID()==categoryID)//it's the first to be added 
-				addCategoryInDatabase(newIDForCategoryID,category.getName(),parentID);
-			int newParentID;
-			if(category.getParentID()==categoryID)
-				newParentID=newIDForCategoryID;
-			else {
-				newParentID=calculateNewID(newIDForCategoryID,category.getParentID());
+			for(Category category : subCategories) {
+				String oldIDString = Integer.toString(category.getCategoryID());
+				String oldRootIDString = Integer.toString(categoryID);
+				String newRootIDString = Integer.toString(newRootID);
+				String newIDString = oldIDString.replace(oldRootIDString, newRootIDString);
+				int newID = Integer.parseInt(newIDString);
+				int newParentID = newID / 10;
+				
+				addCategoryInDatabase(newID, category.getName(), newParentID);
 			}
-			addCategoryInDatabase(calculateNewID(newIDForCategoryID,category.getCategoryID()),category.getName(),newParentID);
-			}
-		}catch(SQLException e) {
+		}
+		catch(SQLException e) {
 				connection.rollback();
-			}
+		}
 		connection.setAutoCommit(true); // enable autocommit because the connection is shared
-	}
-		
-	
-	public int calculateNewID(int newIDForCategoryID,int previousID) {
-		String previousIDString = Integer.toString(previousID);
-		String newIDForCategoryIDString= Integer.toString(newIDForCategoryID);
-		previousIDString.substring(newIDForCategoryIDString.length());
-		return Integer.parseInt(newIDForCategoryIDString.concat(previousIDString));
 	}
 	
 	public void addCategoryInDatabase(int categoryID,String name,int parentID) throws SQLException {

@@ -106,5 +106,16 @@ public class RegisterNewUser extends HttpServlet {
 		webContext.setVariable("registrationError", "Registration succesful! Please log in with the form above!");
 		templateEngine.process(loginPagePath, webContext, response.getWriter());
 	}
+	
+	public void destroy() {
+		if(connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
 }

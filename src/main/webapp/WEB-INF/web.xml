@@ -18,13 +18,25 @@
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
 	</context-param>
 	<filter>
+		<filter-name>NoCacheFilter</filter-name>
+		<filter-class>it.polimi.tiw.filters.NoCacheFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>NoCacheFilter</filter-name>
+		<url-pattern>/index.html</url-pattern>
+		<url-pattern>/Home.html</url-pattern>
+	</filter-mapping>
+	<filter>
 		<filter-name>UserChecker</filter-name>
 		<filter-class>it.polimi.tiw.filters.UserChecker</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>UserChecker</filter-name>
-		<!-- TODO aggiungere tutte le servlet! -->
 		<url-pattern>/GoToHome</url-pattern>
+		<url-pattern>/CopyCategory</url-pattern>
+		<url-pattern>/CreateCategory</url-pattern>
+		<url-pattern>/InsertCopiedCategory</url-pattern> <!-- questo va??? -->
+		<url-pattern>/Logout</url-pattern>
 	</filter-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

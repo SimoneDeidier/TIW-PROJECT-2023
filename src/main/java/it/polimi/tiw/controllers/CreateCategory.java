@@ -96,7 +96,6 @@ public class CreateCategory extends HttpServlet {
 				return;
 			}
 		}
-		// TODO manca il caso in cui gestiamo quando l'utente  sceglie di creare una nuova categoria in root
 		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
 		boolean creationOk;
 		try {
