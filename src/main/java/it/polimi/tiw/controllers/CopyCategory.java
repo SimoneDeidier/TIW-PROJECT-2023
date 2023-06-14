@@ -98,11 +98,11 @@ public class CopyCategory extends HttpServlet {
 		catch (SQLException e) {
 			// TODO: handle exception
 		}
-		for(Category category : copyHereLinkMap.keySet()) {
+		/*for(Category category : copyHereLinkMap.keySet()) {
 			System.out.println(category.getCategoryID() + " - " + copyHereLinkMap.get(category));
-		}
+		}*/
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		//webContext.setVariable("categoriesError", "An errorr ocurred whith the database connection!");
+		//webContext.setVariable("categoriesError", "An error occurred with the database connection!");
 		webContext.setVariable("categoryList", categoriesList);
 		webContext.setVariable("toCopyList", toCopyList);
 		webContext.setVariable("copyLink", false);

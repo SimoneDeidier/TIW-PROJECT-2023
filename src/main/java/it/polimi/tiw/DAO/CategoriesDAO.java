@@ -53,11 +53,13 @@ public class CategoriesDAO {
 				categoriesIndexesList.add(category.getCategoryID());
 			}
 			int ninthChildren = Integer.parseInt(Integer.toString(parentID) + "9");
-			if(!categoriesIndexesList.contains(parentID) || categoriesIndexesList.contains(ninthChildren)) {
+			if(parentID !=0 && (!categoriesIndexesList.contains(parentID) 
+				|| categoriesIndexesList.contains(ninthChildren))) { //Check when parentID !=0
 				return false;
 			}
+			if(parentID==0 && categoriesIndexesList.contains(ninthChildren))
+				return false;
 			int newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
-			// TODO sam manca quando parentID è 0 ovvero il tizio sceglie root
 			preparedStatement.setInt(1, newCategoryID);
 			preparedStatement.setString(2, name);
 			preparedStatement.setInt(3, parentID);
