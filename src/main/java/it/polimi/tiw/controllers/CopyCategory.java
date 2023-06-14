@@ -124,6 +124,10 @@ public class CopyCategory extends HttpServlet {
 		}
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		webContext.setVariable("user", userName);
+		/*for(Category category : copyHereLinkMap.keySet()) {
+			System.out.println(category.getCategoryID() + " - " + copyHereLinkMap.get(category));
+		}*/
+		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		webContext.setVariable("categoryList", categoriesList);
 		webContext.setVariable("isToCopyMap", isToCopyMap);
 		webContext.setVariable("copyLink", false);
