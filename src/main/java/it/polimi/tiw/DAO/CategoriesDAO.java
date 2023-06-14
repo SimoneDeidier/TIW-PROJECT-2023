@@ -82,7 +82,7 @@ public class CategoriesDAO {
 	}
 	
 	
-	public List<Category> findSubCategories(int categoryID) throws SQLException { //also contains the element we're looking for the sub categories for
+	/*  public List<Category> findSubCategories(int categoryID) throws SQLException { //also contains the element we're looking for the sub categories for
 		List<Category> categoryList=findAllCategories();
 		int lastChildrenID= findLastChildrenID(categoryList,categoryID);
 		int previousLastChildrenID=lastChildrenID;
@@ -102,6 +102,29 @@ public class CategoriesDAO {
 		}
 		return subCategoriesList; //returns only the category corresponding to categoryID if it doesn't have any subCategories
 		
+	}*/
+	
+	public List<Category> findSubCategories(int categoryID) throws SQLException {
+		List<Category> resultCategories = new ArrayList<>();
+		for(Category category : findAllCategories()) {
+			if(category.getParentID() == categoryID) {
+				resultCategories.add(category);
+				resultCategories.addAll(findSubCategories(category.getCategoryID()));
+			}
+		}
+		return resultCategories;
+	}
+	
+	public List<Category> toCopyList(int categoryID) throws SQLException {
+		List<Category> resCategories = new ArrayList<>();
+		for(Category category : findAllCategories()) {
+			if(category.getCategoryID() == categoryID) {
+				resCategories.add(category);
+				break;
+			}
+		}
+		resCategories.addAll(findSubCategories(categoryID));
+		return resCategories;
 	}
 	
 	public void insertCopiedCategory(int categoryID,int parentID) throws AlreadyTooManyChildrenException, InvalidParameterException, SQLException { 

@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
@@ -68,6 +71,8 @@ public class CopyCategory extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String parentIDString = request.getParameter("parentID");
+		ServletContext servletContext = getServletContext();
+		String homePath = "Home.html";
 		
 		if(parentIDString == null || parentIDString.isEmpty()) {
 			// TODO error
@@ -86,6 +91,23 @@ public class CopyCategory extends HttpServlet {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 		}
+		List<Category> toCopyList = null;
+		try {
+			toCopyList = categoriesDAO.toCopyList(parentID);
+		}
+		catch (SQLException e) {
+			// TODO: handle exception
+		}
+		for(Category category : copyHereLinkMap.keySet()) {
+			System.out.println(category.getCategoryID() + " - " + copyHereLinkMap.get(category));
+		}
+		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		//webContext.setVariable("categoriesError", "An errorr ocurred whith the database connection!");
+		webContext.setVariable("categoryList", categoriesList);
+		webContext.setVariable("toCopyList", toCopyList);
+		webContext.setVariable("copyLink", false);
+		templateEngine.process(homePath, webContext, response.getWriter());
+		return;
 		
 	}
 

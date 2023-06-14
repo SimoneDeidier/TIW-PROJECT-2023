@@ -69,7 +69,7 @@ public class GoToHome extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String homePath = "/WEB-INF/Home.html";
+		String homePath = "Home.html";
 		ServletContext servletContext = getServletContext();
 		
 		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);

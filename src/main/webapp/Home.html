@@ -15,6 +15,10 @@
 				th:href="@{/CopyCategory(parentID=${category.categoryID})}">
 				copy
 			</a>
+			<a href="Home.html" th:if="${not copyLink}"
+				th:href="@{/GoToHome}"
+				th:text="${#lists.contains(toCopyList, category)} ? '' : 'copy here'">
+			</a>
 		</div>
 		<p th:if="${#lists.isEmpty(categoryList)}">
 			There are no categories to show, please create a new one with the form below!
