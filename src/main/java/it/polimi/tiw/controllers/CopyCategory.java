@@ -73,39 +73,61 @@ public class CopyCategory extends HttpServlet {
 		String parentIDString = request.getParameter("parentID");
 		ServletContext servletContext = getServletContext();
 		String homePath = "Home.html";
+		String userName = (String) request.getSession().getAttribute("username");
 		
 		if(parentIDString == null || parentIDString.isEmpty()) {
-			// TODO error
+			request.setAttribute("errorMessage", "An empty parameter was inserted, please refill the form with all the parameters!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
+			return;
 		}
 		int parentID = 0;
 		try {
 			parentID = Integer.parseInt(parentIDString);
 		}
 		catch (NumberFormatException e) {
-			// TODO: handle exception
+			request.setAttribute("errorMessage", "Parent ID's format is not acceptable, please refill the form!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
+			return;
 		}
 		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
 		List<Category> categoriesList = null;
 		try {
 			categoriesList = categoriesDAO.findAllCategories();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("errorMessage", "An errorr ocurred whith the database connection!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
+			return;
 		}
 		List<Category> toCopyList = null;
 		try {
 			toCopyList = categoriesDAO.toCopyList(parentID);
 		}
 		catch (SQLException e) {
-			// TODO: handle exception
+			request.setAttribute("errorMessage", "An errorr ocurred whith the database connection!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
+			return;
 		}
-		for(Category category : copyHereLinkMap.keySet()) {
-			System.out.println(category.getCategoryID() + " - " + copyHereLinkMap.get(category));
+		Map<Integer, Boolean> isToCopyMap = new HashMap<>();
+		for(Category category : categoriesList) {
+			boolean toAdd = true;
+			int categoryID = category.getCategoryID();
+			for(Category toCopyCategory : toCopyList) {
+				if(categoryID == toCopyCategory.getCategoryID()) {
+					isToCopyMap.put(categoryID, true);
+					toAdd = false;
+					break;
+				}
+			}
+			if(toAdd) {
+				isToCopyMap.put(categoryID, false);
+			}
 		}
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		//webContext.setVariable("categoriesError", "An errorr ocurred whith the database connection!");
+		webContext.setVariable("user", userName);
 		webContext.setVariable("categoryList", categoriesList);
-		webContext.setVariable("toCopyList", toCopyList);
+		webContext.setVariable("isToCopyMap", isToCopyMap);
 		webContext.setVariable("copyLink", false);
+		webContext.setVariable("parentID", parentID);
 		templateEngine.process(homePath, webContext, response.getWriter());
 		return;
 		
