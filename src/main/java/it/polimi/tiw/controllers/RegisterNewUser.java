@@ -98,12 +98,12 @@ public class RegisterNewUser extends HttpServlet {
 		}
 		if(!registration) {
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("registrationError", "Username is unavailable, please refill the form!");
+			webContext.setVariable("registrationError", "Username is already taken, please provide a different one!");
 			templateEngine.process(loginPagePath, webContext, response.getWriter());
 			return;
 		}
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("registrationSuccesful", "Registration succesful! Please log in with the form above!");
+		webContext.setVariable("registrationSuccesful", "Registration succesful! You can log in with the form above!");
 		templateEngine.process(loginPagePath, webContext, response.getWriter());
 	}
 	

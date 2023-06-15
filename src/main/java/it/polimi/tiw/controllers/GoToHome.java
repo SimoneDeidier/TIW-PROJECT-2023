@@ -79,7 +79,7 @@ public class GoToHome extends HttpServlet {
 		}
 		catch (SQLException e) {
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("categoriesError", "An errorr ocurred whith the database connection!");
+			webContext.setVariable("categoriesError", "An error occurred with the database connection!");
 			templateEngine.process(homePath, webContext, response.getWriter());
 			return;
 		}

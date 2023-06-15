@@ -85,7 +85,7 @@ public class InsertCopiedCategory extends HttpServlet {
 			}
 		}
 		catch (NumberFormatException e) {
-			request.setAttribute("errorMessage", "A cateogyr ID's format is not acceptable, please redo the copying operation!");
+			request.setAttribute("errorMessage", "A category ID's format is not acceptable, please redo the copying operation!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
@@ -93,7 +93,7 @@ public class InsertCopiedCategory extends HttpServlet {
 		try {
 			categoriesDAO.insertCopiedCategory(parentID, rootID);
 		} catch (AlreadyTooManyChildrenException e) {
-			request.setAttribute("errorMessage", "The parent category you have chosen already has the maximum number of children, please redo the copying operation!");
+			request.setAttribute("errorMessage", "The parent category you have chosen already has the maximum number of children, please redo the copy operation!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;	
 		} catch (InvalidParameterException e) {
@@ -101,7 +101,7 @@ public class InsertCopiedCategory extends HttpServlet {
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;	
 		} catch (SQLException e) {
-			request.setAttribute("errorMessage", "An errorr ocurred whith the database connection!");
+			request.setAttribute("errorMessage", "An error occurred with the database connection!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}

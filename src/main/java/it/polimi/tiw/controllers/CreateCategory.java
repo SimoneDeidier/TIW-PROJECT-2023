@@ -102,12 +102,12 @@ public class CreateCategory extends HttpServlet {
 			creationOk = categoriesDAO.createCategory(nameString, parentID);
 		}
 		catch (SQLException e) {
-			request.setAttribute("errorMessage", "An errorr ocurred whith the database connection!");
+			request.setAttribute("errorMessage", "An error occurred with the database connection!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
 		if(!creationOk) {
-			request.setAttribute("errorMessage", "An errorr ocurred whith the creation of the new category, please remember that a category may have a maximum of nine childrens!");
+			request.setAttribute("errorMessage", "An error occurred with the creation of the new category, please remember that a category may have a maximum of nine childrens!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
