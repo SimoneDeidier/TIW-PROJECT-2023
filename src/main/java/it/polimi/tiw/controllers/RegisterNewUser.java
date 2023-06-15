@@ -103,7 +103,7 @@ public class RegisterNewUser extends HttpServlet {
 			return;
 		}
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("registrationError", "Registration succesful! Please log in with the form above!");
+		webContext.setVariable("registrationSuccesful", "Registration succesful! Please log in with the form above!");
 		templateEngine.process(loginPagePath, webContext, response.getWriter());
 	}
 	

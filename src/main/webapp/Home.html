@@ -3,17 +3,22 @@
 	<head>
 		<meta charset="ISO-8859-1">
 		<title>Homepage</title>
+		<link rel="stylesheet" type="text/css" media="all"
+			href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
 	</head>
 	<body>
 		<h1 th:text="${'Welcome to your homepage, ' + user + '!'}">Welcome to the homepage!</h1>
 		<h3>All your categories:</h3>
-		<p th:text="${categoriesError}"></p>
+		<p class="redtext" th:text="${categoriesError}"></p>
 		<a href="Home.html" th:if="${not copyLink}"
 			th:href="@{/InsertCopiedCategory(parentID=${parentID}, rootID='root')}">
 			copy here
 		</a>
 		<div th:each="category : ${categoryList}">
-			<span th:text="${category.categoryID + ' - ' + category.name + ' - '}">XXX - Generic category - </span>
+			<span th:if="${copyLink or (not copyLink and not isToCopyMap[category.categoryID])}"
+			 	th:text="${category.categoryID + ' - ' + category.name + ' - '}">XXX - Generic category - </span>
+		 	<span class="redtext" th:if="${not copyLink and isToCopyMap[category.categoryID]}"
+		 		th:text="${category.categoryID + ' - ' + category.name}">XXX - Generic category - </span>
 			<a href="Home.html" th:if="${copyLink}"
 				th:href="@{/CopyCategory(parentID=${category.categoryID})}">
 				copy

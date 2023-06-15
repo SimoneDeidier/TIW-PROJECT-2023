@@ -42,7 +42,7 @@ public class UserDAO {
 		ResultSet result = statement.executeQuery("SELECT username FROM User");
 		if(result.isBeforeFirst()) {
 			while(result.next()) {
-				if(username == result.getString("username")) {
+				if(username.equals(result.getString("username"))) {
 					return false;
 				}
 			}
