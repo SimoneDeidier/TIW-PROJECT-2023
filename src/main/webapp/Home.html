@@ -33,7 +33,7 @@
 			There are no categories to show, please create a new one with the form below!
 		</p>
 		<h3 th:if="${copyLink}">Insert a new category:</h3>
-		<form th:if="${copyLink}" th:action="@{/CreateCategory}" method="POST">
+		<form class="box" th:if="${copyLink}" th:action="@{/CreateCategory}" method="POST">
 			Parent ID: 
 			<select name="parentID" required>
 				<option th:each="id : ${idList}" th:value="${id}" th:text="${id}"></option>
