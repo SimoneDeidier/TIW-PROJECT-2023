@@ -88,7 +88,7 @@ public class GoToHome extends HttpServlet {
 		idList.add("root");
 		if(list != null) {
 			for(Category category : list) {
-				idList.add(Integer.toString(category.getCategoryID()));
+				idList.add(Long.toString(category.getCategoryID()));
 			}
 		}
 		

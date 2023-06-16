@@ -32,49 +32,49 @@ public class CategoriesDAO {
 		else {
 			while(result.next()) {
 				Category category = new Category();
-				category.setCategoryID(result.getInt("categoryID"));
+				category.setCategoryID(result.getLong("categoryID"));
 				category.setName(result.getString("name"));
-				category.setParentID(result.getInt("parentID"));
+				category.setParentID(result.getLong("parentID"));
 				categoriesList.add(category);
 			}
 		}
-		return orderCategoriesList(categoriesList, 0);
+		return orderCategoriesList(categoriesList, (long) 0);
 															
 	}
 
 	
-	public boolean createCategory(String name, int parentID) throws SQLException {
+	public boolean createCategory(String name, long parentID) throws SQLException {
 		String query = "INSERT INTO Category VALUES (?, ?, ?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		List<Category> categoriesList = findAllCategories();
-		List<Integer> categoriesIndexesList = new ArrayList<>();
+		List<Long> categoriesIndexesList = new ArrayList<>();
 		if(categoriesList != null) {
 			for(Category category : categoriesList) {
 				categoriesIndexesList.add(category.getCategoryID());
 			}
-			int ninthChildren = Integer.parseInt(Integer.toString(parentID) + "9");
-			if(parentID !=0 && (!categoriesIndexesList.contains(parentID) 
+			long ninthChildren = Long.parseLong(Long.toString(parentID) + "9");
+			if(parentID != 0 && (!categoriesIndexesList.contains(parentID) 
 				|| categoriesIndexesList.contains(ninthChildren))) { //Check when parentID !=0
 				return false;
 			}
-			if(parentID==0 && categoriesIndexesList.contains(ninthChildren))
+			if(parentID == 0 && categoriesIndexesList.contains(ninthChildren))
 				return false;
-			int newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
-			preparedStatement.setInt(1, newCategoryID);
+			long newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
+			preparedStatement.setLong(1, newCategoryID);
 			preparedStatement.setString(2, name);
-			preparedStatement.setInt(3, parentID);
+			preparedStatement.setLong(3, parentID);
 			preparedStatement.executeUpdate();
 			return true;
 		}
-		preparedStatement.setInt(1, 1);
+		preparedStatement.setLong(1, 1);
 		preparedStatement.setString(2, name);
-		preparedStatement.setInt(3, parentID);
+		preparedStatement.setLong(3, parentID);
 		preparedStatement.executeUpdate();
 		return true;
 	}
 	
-	public int findLastChildrenID(List<Category> categoriesList, int parentID) {
-		int maxIndex = 0;
+	public long findLastChildrenID(List<Category> categoriesList, long parentID) {
+		long maxIndex = 0;
 		for(Category category : categoriesList) {
 			if(category.getParentID() == parentID && category.getCategoryID() > maxIndex) {
 				maxIndex = category.getCategoryID();
@@ -84,7 +84,7 @@ public class CategoriesDAO {
 	}
 	
 	
-	public boolean checkExistingCategoryFromID(int categoryID) throws SQLException {
+	public boolean checkExistingCategoryFromID(long categoryID) throws SQLException {
 		List<Category> categories = findAllCategories();
 		for(Category category : categories) {
 			if(category.getCategoryID() == categoryID) {
@@ -94,7 +94,7 @@ public class CategoriesDAO {
 		return false;
 	}
 	
-	public List<Category> findSubCategories(int categoryID) throws SQLException {
+	public List<Category> findSubCategories(long categoryID) throws SQLException {
 		List<Category> resultCategories = new ArrayList<>();
 		for(Category category : findAllCategories()) {
 			if(category.getParentID() == categoryID) {
@@ -105,7 +105,7 @@ public class CategoriesDAO {
 		return resultCategories;
 	}
 	
-	public List<Category> toCopyList(int categoryID) throws SQLException {
+	public List<Category> toCopyList(long categoryID) throws SQLException {
 		List<Category> resCategories = new ArrayList<>();
 		for(Category category : findAllCategories()) {
 			if(category.getCategoryID() == categoryID) {
@@ -117,9 +117,9 @@ public class CategoriesDAO {
 		return resCategories;
 	}
 	
-	public void insertCopiedCategory(int categoryID,int parentID) throws AlreadyTooManyChildrenException, InvalidParameterException, SQLException { 
+	public void insertCopiedCategory(long categoryID, long parentID) throws AlreadyTooManyChildrenException, InvalidParameterException, SQLException { 
 		List<Category> categoriesList = findAllCategories();
-		List<Integer> categoriesIndexesList = new ArrayList<>();
+		List<Long> categoriesIndexesList = new ArrayList<>();
 		
 		for(Category category : categoriesList) {
 			categoriesIndexesList.add(category.getCategoryID());
@@ -128,29 +128,35 @@ public class CategoriesDAO {
 			throw new InvalidParameterException();
 		}
 		
-		int lastChildrenOfRoot = findLastChildrenID(categoriesList, parentID);
-		if(lastChildrenOfRoot % 10 == 9) {
+		long lastChildrenOfParent = findLastChildrenID(categoriesList, parentID);
+		if(lastChildrenOfParent % 10 == 9) {
 			throw new AlreadyTooManyChildrenException();
 		}
 		
 		List<Category> subCategories = toCopyList(categoryID);
-		int newRootID;
-		if(lastChildrenOfRoot != 0) {
-			newRootID = lastChildrenOfRoot + 1;
+		long newCategoryID;
+		if(lastChildrenOfParent != 0) {
+			newCategoryID = lastChildrenOfParent + 1;
 		}
 		else {
-			newRootID = (parentID*10) + 1;
+			newCategoryID = (parentID * 10) + 1;
 		}
+		System.out.println("NEW CAT ID: " + newCategoryID);
 		
 		connection.setAutoCommit(false); // disable autocommit
 		try{
 			for(Category category : subCategories) {
-				String oldIDString = Integer.toString(category.getCategoryID());
-				String oldRootIDString = Integer.toString(categoryID);
-				String newRootIDString = Integer.toString(newRootID);
-				String newIDString = oldIDString.replace(oldRootIDString, newRootIDString);
-				int newID = Integer.parseInt(newIDString);
-				int newParentID = newID / 10;
+				String idString = Long.toString(category.getCategoryID());
+				System.out.println("ID: " + idString);
+				String categoryIDString = Long.toString(categoryID);
+				System.out.println("CAT ID: " + categoryIDString);
+				String newCategoryIDString = Long.toString(newCategoryID);
+				System.out.println("NEW CAT ID: " + newCategoryIDString);
+				String tmpString = idString.substring(categoryIDString.length());
+				String newIDString = newCategoryIDString + tmpString;
+				System.out.println("NEW ID: " + newIDString);
+				long newID = Long.parseLong(newIDString);
+				long newParentID = newID / 10;
 				
 				addCategoryInDatabase(newID, category.getName(), newParentID);
 			}
@@ -161,16 +167,16 @@ public class CategoriesDAO {
 		connection.setAutoCommit(true); // enable autocommit because the connection is shared
 	}
 	
-	public void addCategoryInDatabase(int categoryID,String name,int parentID) throws SQLException {
+	public void addCategoryInDatabase(long newID, String name, long newParentID) throws SQLException {
 		String query = "INSERT INTO Category VALUES (?, ?, ?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
-		preparedStatement.setInt(1, categoryID);
+		preparedStatement.setLong(1, newID);
 		preparedStatement.setString(2, name);
-		preparedStatement.setInt(3, parentID);
+		preparedStatement.setLong(3, newParentID);
 		preparedStatement.executeUpdate();
 	}
 	
-	public List<Category> orderCategoriesList(List<Category> unordered, Integer parentID) {
+	public List<Category> orderCategoriesList(List<Category> unordered, Long parentID) {
 		List<Category> result = new ArrayList<>();
 		
 		for(Category category : unordered) {

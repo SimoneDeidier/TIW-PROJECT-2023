@@ -2,15 +2,15 @@ package it.polimi.tiw.beans;
 
 public class Category {
 	
-	private int categoryID;
+	private long categoryID;
 	private String name;
-	private int parentID;
+	private long parentID;
 	
-	public int getCategoryID() {
+	public long getCategoryID() {
 		return categoryID;
 	}
 	
-	public void setCategoryID(int categoryID) {
+	public void setCategoryID(long categoryID) {
 		this.categoryID = categoryID;
 	}
 	
@@ -22,11 +22,11 @@ public class Category {
 		this.name = name;
 	}
 	
-	public int getParentID() {
+	public long getParentID() {
 		return parentID;
 	}
 	
-	public void setParentID(int parentID) {
+	public void setParentID(long parentID) {
 		this.parentID = parentID;
 	}
 

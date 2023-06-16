@@ -70,22 +70,22 @@ public class CopyCategory extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String parentIDString = request.getParameter("parentID");
+		String categoryIDString = request.getParameter("categoryID");
 		ServletContext servletContext = getServletContext();
 		String homePath = "Home.html";
 		String userName = (String) request.getSession().getAttribute("username");
 		
-		if(parentIDString == null || parentIDString.isEmpty()) {
+		if(categoryIDString == null || categoryIDString.isEmpty()) {
 			request.setAttribute("errorMessage", "An empty parameter was inserted, please select another category!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
-		int parentID = 0;
+		long categoryID = 0;
 		try {
-			parentID = Integer.parseInt(parentIDString);
+			categoryID = Long.parseLong(categoryIDString);
 		}
 		catch (NumberFormatException e) {
-			request.setAttribute("errorMessage", "Parent ID's format is not acceptable, please select another category!");
+			request.setAttribute("errorMessage", "Category ID's format is not acceptable, please select another category!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
@@ -94,33 +94,33 @@ public class CopyCategory extends HttpServlet {
 		List<Category> categoriesList = null;
 		List<Category> toCopyList = null;
 		try {
-			parameterOK = categoriesDAO.checkExistingCategoryFromID(parentID);
+			parameterOK = categoriesDAO.checkExistingCategoryFromID(categoryID);
 			if(!parameterOK) {
-				request.setAttribute("errorMessage", "Wrong parent ID in the query string, please select another category!");
+				request.setAttribute("errorMessage", "Wrong category ID in the query string, please select another category!");
 				servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 				return;	
 			}
 			categoriesList = categoriesDAO.findAllCategories();
-			toCopyList = categoriesDAO.toCopyList(parentID);
+			toCopyList = categoriesDAO.toCopyList(categoryID);
 		}
 		catch (SQLException e) {
 			request.setAttribute("errorMessage", "An errorr ocurred whith the database connection!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
-		Map<Integer, Boolean> isToCopyMap = new HashMap<>();
+		Map<Long, Boolean> isToCopyMap = new HashMap<>();
 		for(Category category : categoriesList) {
 			boolean toAdd = true;
-			int categoryID = category.getCategoryID();
+			long id = category.getCategoryID();
 			for(Category toCopyCategory : toCopyList) {
-				if(categoryID == toCopyCategory.getCategoryID()) {
-					isToCopyMap.put(categoryID, true);
+				if(id == toCopyCategory.getCategoryID()) {
+					isToCopyMap.put(id, true);
 					toAdd = false;
 					break;
 				}
 			}
 			if(toAdd) {
-				isToCopyMap.put(categoryID, false);
+				isToCopyMap.put(id, false);
 			}
 		}
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
@@ -128,7 +128,7 @@ public class CopyCategory extends HttpServlet {
 		webContext.setVariable("categoryList", categoriesList);
 		webContext.setVariable("isToCopyMap", isToCopyMap);
 		webContext.setVariable("copyLink", false);
-		webContext.setVariable("parentID", parentID);
+		webContext.setVariable("categoryID", categoryID);
 		templateEngine.process(homePath, webContext, response.getWriter());
 		return;
 		

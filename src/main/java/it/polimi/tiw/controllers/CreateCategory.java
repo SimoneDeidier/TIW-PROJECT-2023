@@ -85,12 +85,17 @@ public class CreateCategory extends HttpServlet {
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
-		int parentID = 0;
+		long parentID = 0;
 		if(!Objects.equals(parentIDString, "root")) {
 			try {
-				parentID = Integer.parseInt(parentIDString);
+				parentID = Long.parseLong(parentIDString);
 			}
 			catch (NumberFormatException e) {
+				request.setAttribute("errorMessage", "Parent ID's format is not acceptable, please refill the form!");
+				servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
+				return;
+			}
+			if(parentID <= 0) {
 				request.setAttribute("errorMessage", "Parent ID's format is not acceptable, please refill the form!");
 				servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 				return;

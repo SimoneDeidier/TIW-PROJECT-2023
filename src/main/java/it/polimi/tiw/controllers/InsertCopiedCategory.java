@@ -68,20 +68,20 @@ public class InsertCopiedCategory extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String categoryIDString = request.getParameter("categoryID");
 		String parentIDString = request.getParameter("parentID");
-		String rootIDString = request.getParameter("rootID");
 		ServletContext servletContext = getServletContext();
 		
-		if(parentIDString == null || parentIDString.isEmpty() || rootIDString == null || rootIDString.isEmpty()) {
+		if(categoryIDString == null || categoryIDString.isEmpty() || parentIDString == null || parentIDString.isEmpty()) {
 			request.setAttribute("errorMessage", "An empty parameter was inserted, please redo the copying operation!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
-		int parentID = 0, rootID = 0;
+		long categoryID = 0, parentID = 0;
 		try {
-			parentID = Integer.parseInt(parentIDString);
-			if(!Objects.equals(rootIDString, "root")) {
-					rootID = Integer.parseInt(rootIDString);
+			categoryID = Long.parseLong(categoryIDString);
+			if(!Objects.equals(parentIDString, "root")) {
+					parentID = Long.parseLong(parentIDString);
 			}
 		}
 		catch (NumberFormatException e) {
@@ -91,7 +91,7 @@ public class InsertCopiedCategory extends HttpServlet {
 		}
 		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
 		try {
-			categoriesDAO.insertCopiedCategory(parentID, rootID);
+			categoriesDAO.insertCopiedCategory(categoryID, parentID);
 		} catch (AlreadyTooManyChildrenException e) {
 			request.setAttribute("errorMessage", "The parent category you have chosen already has the maximum number of children, please redo the copy operation!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
