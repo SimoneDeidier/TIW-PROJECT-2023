@@ -13,9 +13,13 @@ import java.util.stream.Collectors;
 import it.polimi.tiw.beans.Category;
 import it.polimi.tiw.exceptions.AlreadyTooManyChildrenException;
 import it.polimi.tiw.exceptions.InvalidParameterException;
+import it.polimi.tiw.exceptions.TooLongIDException;
 
 public class CategoriesDAO {
 	private Connection connection;
+	
+	private final static long MAX_ID = 100000000000000000L;
+	private final static int MAX_ID_LENGTH = 18;
 	
 	public CategoriesDAO(Connection connection) {
 		this.connection = connection;
@@ -43,11 +47,14 @@ public class CategoriesDAO {
 	}
 
 	
-	public boolean createCategory(String name, long parentID) throws SQLException {
+	public boolean createCategory(String name, long parentID) throws SQLException, TooLongIDException {
 		String query = "INSERT INTO Category VALUES (?, ?, ?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		List<Category> categoriesList = findAllCategories();
 		List<Long> categoriesIndexesList = new ArrayList<>();
+		if (parentID >= MAX_ID) {
+			throw new TooLongIDException();
+		}
 		if(categoriesList != null) {
 			for(Category category : categoriesList) {
 				categoriesIndexesList.add(category.getCategoryID());
@@ -57,8 +64,9 @@ public class CategoriesDAO {
 				|| categoriesIndexesList.contains(ninthChildren))) { //Check when parentID !=0
 				return false;
 			}
-			if(parentID == 0 && categoriesIndexesList.contains(ninthChildren))
+			if(parentID == 0 && categoriesIndexesList.contains(ninthChildren)) {
 				return false;
+			}
 			long newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
 			preparedStatement.setLong(1, newCategoryID);
 			preparedStatement.setString(2, name);
@@ -117,7 +125,7 @@ public class CategoriesDAO {
 		return resCategories;
 	}
 	
-	public void insertCopiedCategory(long categoryID, long parentID) throws AlreadyTooManyChildrenException, InvalidParameterException, SQLException { 
+	public void insertCopiedCategory(long categoryID, long parentID) throws AlreadyTooManyChildrenException, InvalidParameterException, SQLException, TooLongIDException { 
 		List<Category> categoriesList = findAllCategories();
 		List<Long> categoriesIndexesList = new ArrayList<>();
 		
@@ -154,6 +162,9 @@ public class CategoriesDAO {
 				System.out.println("NEW CAT ID: " + newCategoryIDString);
 				String tmpString = idString.substring(categoryIDString.length());
 				String newIDString = newCategoryIDString + tmpString;
+				if(newIDString.length() >= MAX_ID_LENGTH) {
+					throw new TooLongIDException();
+				}
 				System.out.println("NEW ID: " + newIDString);
 				long newID = Long.parseLong(newIDString);
 				long newParentID = newID / 10;

@@ -21,6 +21,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import it.polimi.tiw.DAO.CategoriesDAO;
 import it.polimi.tiw.exceptions.AlreadyTooManyChildrenException;
 import it.polimi.tiw.exceptions.InvalidParameterException;
+import it.polimi.tiw.exceptions.TooLongIDException;
 
 /**
  * Servlet implementation class InsertCopiedCategory
@@ -92,15 +93,23 @@ public class InsertCopiedCategory extends HttpServlet {
 		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
 		try {
 			categoriesDAO.insertCopiedCategory(categoryID, parentID);
-		} catch (AlreadyTooManyChildrenException e) {
+		}
+		catch (AlreadyTooManyChildrenException e) {
 			request.setAttribute("errorMessage", "The parent category you have chosen already has the maximum number of children, please redo the copy operation!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;	
-		} catch (InvalidParameterException e) {
+		} 
+		catch (InvalidParameterException e) {
 			request.setAttribute("errorMessage", "Wrong category in the query string, please redo the copying operation!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;	
-		} catch (SQLException e) {
+		}
+		catch (TooLongIDException e) {
+			request.setAttribute("errorMessage", "The chosen parent can't have childrens, this branch has reached its maximum length!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
+			return;
+		}
+		catch (SQLException e) {
 			request.setAttribute("errorMessage", "An error occurred with the database connection!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
