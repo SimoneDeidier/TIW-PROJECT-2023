@@ -20,6 +20,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.DAO.CategoriesDAO;
+import it.polimi.tiw.exceptions.TooLongIDException;
 
 /**
  * Servlet implementation class CreateCategory
@@ -108,6 +109,11 @@ public class CreateCategory extends HttpServlet {
 		}
 		catch (SQLException e) {
 			request.setAttribute("errorMessage", "An error occurred with the database connection!");
+			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
+			return;
+		}
+		catch (TooLongIDException e) {
+			request.setAttribute("errorMessage", "The chosen parent can't have childrens, this branch has reached its maximum length!");
 			servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 			return;
 		}
