@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
+  <display-name>pure-html</display-name>
+  <context-param>
+    <param-name>dbUrl</param-name>
+    <param-value>jdbc:mysql://localhost:3306/tiw_project?serverTimezone=UTC</param-value>
+  </context-param>
+  <context-param>
+    <param-name>dbUser</param-name>
+    <param-value>root</param-value>
+  </context-param>
+  <context-param>
+    <param-name>dbPassword</param-name>
+    <param-value>e2FQFVNdAR3n2XbxZ</param-value>
+  </context-param>
+  <context-param>
+    <param-name>dbDriver</param-name>
+    <param-value>com.mysql.cj.jdbc.Driver</param-value>
+  </context-param>
+  <filter>
+    <filter-name>NoCacheFilter</filter-name>
+    <filter-class>it.polimi.tiw.filters.NoCacheFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>NoCacheFilter</filter-name>
+    <url-pattern>/index.html</url-pattern>
+    <url-pattern>/Home.html</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>UserChecker</filter-name>
+    <filter-class>it.polimi.tiw.filters.UserChecker</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>UserChecker</filter-name>
+    <url-pattern>/GoToHome</url-pattern>
+    <url-pattern>/CopyCategory</url-pattern>
+    <url-pattern>/CreateCategory</url-pattern>
+    <url-pattern>/InsertCopiedCategory</url-pattern>
+    <url-pattern>/Logout</url-pattern>
+  </filter-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+</web-app>

@@ -1,0 +1,17 @@
+.redtext {color: red;}
+
+.greentext {color: green;}
+
+.box {
+border-width: 2px;
+border-style: solid;
+border-color: black;
+height: 75px;
+width: 300px;
+padding-top: 5px;
+padding-left: 5px;
+}
+
+.moveright {
+padding-left: 30px;
+}

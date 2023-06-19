@@ -26,6 +26,7 @@
 		<url-pattern>/index.html</url-pattern>
 		<url-pattern>/Home.html</url-pattern>
 	</filter-mapping>
+	<!-- TODO da mettere a posto poi questa parte qui
 	<filter>
 		<filter-name>UserChecker</filter-name>
 		<filter-class>it.polimi.tiw.filters.UserChecker</filter-class>
@@ -35,9 +36,9 @@
 		<url-pattern>/GoToHome</url-pattern>
 		<url-pattern>/CopyCategory</url-pattern>
 		<url-pattern>/CreateCategory</url-pattern>
-		<url-pattern>/InsertCopiedCategory</url-pattern> <!-- questo va??? -->
+		<url-pattern>/InsertCopiedCategory</url-pattern>
 		<url-pattern>/Logout</url-pattern>
-	</filter-mapping>
+	</filter-mapping>  -->
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
