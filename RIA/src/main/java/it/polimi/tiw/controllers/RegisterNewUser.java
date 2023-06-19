@@ -14,46 +14,44 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import it.polimi.tiw.DAO.UserDAO;
-import it.polimi.tiw.beans.User;
 
 /**
- * Servlet implementation class CheckLogin
+ * Servlet implementation class RegisterNewUser
  */
-@WebServlet("/CheckLogin")
+@WebServlet("/RegisterNewUser")
 @MultipartConfig
-public class CheckLogin extends HttpServlet {
+public class RegisterNewUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection = null;       
+	private Connection connection = null;
+       
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CheckLogin() {
+    public RegisterNewUser() {
         super();
         // TODO Auto-generated constructor stub
     }
-
+    
     public void init() throws ServletException {
-		ServletContext context = getServletContext();
-		String driver = context.getInitParameter("dbDriver");
-		String url = context.getInitParameter("dbUrl");
-		String user = context.getInitParameter("dbUser");
-		String password = context.getInitParameter("dbPassword");
-		
-		try {
+    	ServletContext context = getServletContext();
+    	String driver = context.getInitParameter("dbDriver");
+    	String url = context.getInitParameter("dbUrl");
+    	String user = context.getInitParameter("dbUser");
+    	String password = context.getInitParameter("dbPassword");
+    	
+    	try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
 			throw new UnavailableException("Can't load database driver");
 		}
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			this.connection = DriverManager.getConnection(url, user, password);
 		} catch (SQLException e) {
 			throw new UnavailableException("Couldn't get db connection");
 		}
     }
-    
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -66,37 +64,32 @@ public class CheckLogin extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String username = null;
-		String password = null;
-		username = StringEscapeUtils.escapeJava(request.getParameter("username"));
-		password = StringEscapeUtils.escapeJava(request.getParameter("password"));
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
 		
 		if(username == null || username.isEmpty() || password == null || password.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Username or password were missing, please refill the form!");
 			return;
+			
 		}
-		UserDAO userDAO = new UserDAO(connection);
-		User user = null;
+		UserDAO userDAO = new UserDAO(this.connection);
+		boolean registration = false;
 		try {
-			user = userDAO.checkLogin(username, password);
+			registration = userDAO.registerNewUser(username, password);
 		}
 		catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.getWriter().println("An error occurred with the database connection, please refill the form!");
 			return;
 		}
-		if(user == null) {
+		if(!registration) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().println("Username or password inserted aren't correct, please refill the form!");
+			response.getWriter().println("Username is already taken, please provide a different one!");
 			return;
 		}
-		request.getSession().setAttribute("username", username);
 		response.setStatus(HttpServletResponse.SC_OK);
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().println(username);
-		
+		response.getWriter().println("Registration succesful! You can log in with the form above!");
 	}
 	
 	public void destroy() {
