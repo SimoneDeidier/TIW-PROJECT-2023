@@ -1,10 +1,30 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-
-</body>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Homepage</title>
+			<link rel="stylesheet" type="text/css" media="all" href="resources/mystyle.css" />
+			<script src="./resources/makeCall.js" charset="utf-8" defer></script>
+			<script src="./resources/home.js" charset="utf-8" defer></script>
+	</head>
+	<body>
+		<header>
+			<h1 id="welcomeTitle"></h1>
+		</header>
+		<section>
+			<h3>All your categories:</h3>
+			<p id="noCategories"></p>
+			<div id="categoriesContainer">
+			</div>
+		</section>
+		<section>
+			<form id="createCategoryForm" class="box" action="#">
+				Parent ID: 
+				<select id="parentIDCreation" name="parentID" required>
+				</select><br>
+				Category name: <input type="text" name="name" required><br>
+				<input id="createCategory" type="submit" name="Create category">
+			</form>
+		</section>
+	</body>
 </html>

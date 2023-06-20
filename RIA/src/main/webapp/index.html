@@ -8,20 +8,27 @@
 		<script src="./resources/loginPage.js" charset="utf-8" defer></script>
 	</head>
 	<body>
-		<h1>Please, login to access the Homepage!</h1>
-		<p id="loginError" class="redtext"></p>
-		<form action="#">
-			username: <input type="text" name="username" required><br>
-			password: <input type="password" name="password" required><br>
-			<input id="loginButton" type="button" value="login">
-		</form>
-		<h2>Are you not registered? Register here:</h2>
-		<p id="registrationError" class="redtext"></p>
-		<p id="registrationSuccess" class="greentext"></p>
-		<form action="#">
-			username: <input type="text" name="username" required><br>
-			password: <input type="password" name="password" required><br>
-			<input id="registrationButton" type="button" value="register">
-		</form>
+		<header>
+			<h1>Classification of satellite images</h1>
+		</header>
+		<section>
+		<h2>Please, login to access the Homepage!</h2>
+			<form action="#">
+				username: <input id="username" type="text" name="username" required><br>
+				password: <input id="password" type="password" name="password" required><br>
+				<input id="loginButton" type="button" value="login">
+			</form>
+		</section>
+		<section>
+			<h2>Are you not registered? Register here:</h2>
+			<form action="#">
+				username: <input id="newUsername" type="text" name="username" required><br>
+				password: <input type="password" name="password" required><br>
+				<input id="registrationButton" type="button" value="register">
+			</form>
+		</section>
+		<footer>
+			<p>Web Information Technologies project - developed by group 9 - De Ciechi Samuele - Deidier Simone</p>
+		</footer>
 	</body>
 </html>

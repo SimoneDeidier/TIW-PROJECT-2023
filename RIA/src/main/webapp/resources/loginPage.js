@@ -4,18 +4,14 @@
 
  (function() {
 	 
-	 let loginButton = document.getElementById("loginButton");
-	 let loginError = document.getElementById("loginError");
-	 let registrationError= document.getElementById("registrationError");
-	 let registrationSuccess= document.getElementById("registrationSuccess");
 	 let registrationButton= document.getElementById("registrationButton");
 	 
 	 loginButton.addEventListener('click', (e) => {
 		 let form = e.target.closest("form");
 		 
 		 if(form.checkValidity()) {
-			 makeCall("POST", 'CheckLogin', e.target.closest("form"), function(x) {
-				 if(x.readyState == XMLHttpRequest.DONE) {
+			 makeCall("POST", 'CheckLogin', form, function(x) {
+				 if(x.readyState === XMLHttpRequest.DONE) {
 					 let response = x.responseText;
 					 
 					 switch(x.status) {
@@ -25,19 +21,19 @@
 							 break;
 						 }
 						 case 400: {	// bad request
-							 loginError.textContent = response;
+							 alert(response);
 							 break;
 						 }
 						 case 401: {	// unauthorized
-							 loginError.textContent = response;
+							 alert(response);
 							 break;
 						 }
 						 case 500: {	// server error
-							 loginError.textContent = response;
+							 alert(response);
 							 break;
 						 }
 						 default: {
-							 loginError.textContent = "Unknown error occurred.";
+							 alert("Unknown error occurred.");
 							 break;
 						 }
 					 }
@@ -53,29 +49,32 @@
 		 let form = e.target.closest("form");
 		 
 		 if(form.checkValidity()) {
-			 makeCall("POST", 'RegisterNewUser', e.target.closest("form"), function(x) {
-				 if(x.readyState == XMLHttpRequest.DONE) {
+			var newUsername = document.getElementById("newUsername").value;
+			 makeCall("POST", 'RegisterNewUser', form, function(x) {
+				 if(x.readyState === XMLHttpRequest.DONE) {
 					 let response = x.responseText;
 					 
 					 switch(x.status) {
 						 case 200: {
-							 registrationSuccess.textContent = response;
+							 alert(response);
+							 document.getElementById("username").value = newUsername;
+							 document.getElementById("password").focus();
 							 break;
 						 }
 						 case 400: {	// bad request
-							 registrationError.textContent = response;
+							 alert(response);
 							 break;
 						 }
 						 case 401: {	// unauthorized
-							 registrationError.textContent = response;
+							 alert(response);
 							 break;
 						 }
 						 case 500: {	// server error
-							 registrationError.textContent = response;
+							 alert(response);
 							 break;
 						 }
 						 default: {
-							 registrationError.textContent = "Unknown error occurred.";
+							 alert("Unknown error occurred.");
 							 break;
 						 }
 					 }

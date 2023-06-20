@@ -7,41 +7,49 @@
 			href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
 	</head>
 	<body>
-		<h1 th:text="${'Welcome to your homepage, ' + user + '!'}">Welcome to the homepage!</h1>
-		<h3>All your categories:</h3>
-		<p class="redtext" th:text="${categoriesError}"></p>
-		<a href="Home.html" th:if="${not copyLink}"
-			th:href="@{/InsertCopiedCategory(categoryID=${categoryID}, parentID='root')}">
-			copy here
-		</a>
-		<div th:each="category : ${categoryList}">
-		 	<span th:class=" (${copyLink or (not copyLink and not isToCopyMap[category.categoryID])} ? '' : 'redtext') 
-		 					+ ' ' + (${category.categoryID >= 10} ? 'moveright' : '')"
-   				th:text="${category.categoryID + ' - ' + category.name}">
-		 		XXX - Generic category
-	 		</span>
-		 	<span th:if="${copyLink or (not copyLink and not isToCopyMap[category.categoryID])}"> - </span>
-			<a href="Home.html" th:if="${copyLink}"
-				th:href="@{/CopyCategory(categoryID=${category.categoryID})}">
-				copy
-			</a>
-			<a href="Home.html" th:if="${not copyLink and not isToCopyMap[category.categoryID]}"
-				th:href="@{/InsertCopiedCategory(categoryID=${categoryID}, parentID=${category.categoryID})}">
+		<header>
+			<h1 th:text="${'Welcome to your homepage, ' + user + '!'}">Welcome to the homepage!</h1>
+		</header>
+		<section>
+			<h3>All your categories:</h3>
+			<p class="redtext" th:text="${categoriesError}"></p>
+			<a href="Home.html" th:if="${not copyLink}"
+				th:href="@{/InsertCopiedCategory(categoryID=${categoryID}, parentID='root')}">
 				copy here
 			</a>
-		</div>
-		<p th:if="${#lists.isEmpty(categoryList)}">
-			There are no categories to show, please create a new one with the form below!
-		</p>
+			<div th:each="category : ${categoryList}">
+			 	<span th:class=" (${copyLink or (not copyLink and not isToCopyMap[category.categoryID])} ? '' : 'redtext') 
+			 					+ ' ' + (${category.categoryID >= 10} ? 'moveright' : '')"
+	   				th:text="${category.categoryID + ' - ' + category.name}">
+			 		XXX - Generic category
+		 		</span>
+			 	<span th:if="${copyLink or (not copyLink and not isToCopyMap[category.categoryID])}"> - </span>
+				<a href="Home.html" th:if="${copyLink}"
+					th:href="@{/CopyCategory(categoryID=${category.categoryID})}">
+					copy
+				</a>
+				<a href="Home.html" th:if="${not copyLink and not isToCopyMap[category.categoryID]}"
+					th:href="@{/InsertCopiedCategory(categoryID=${categoryID}, parentID=${category.categoryID})}">
+					copy here
+				</a>
+			</div>
+			<p th:if="${#lists.isEmpty(categoryList)}">
+				There are no categories to show, please create a new one with the form below!
+			</p>
+		</section>
+		<section>
 		<h3 th:if="${copyLink}">Insert a new category:</h3>
-		<form class="box" th:if="${copyLink}" th:action="@{/CreateCategory}" method="POST">
-			Parent ID: 
-			<select name="parentID" required>
-				<option th:each="id : ${idList}" th:value="${id}" th:text="${id}"></option>
-			</select><br>
-			Category name: <input type="text" name="name" required><br>
-			<input type="submit" name="Create category">
-		</form>
-		<p><a th:href="@{/Logout}">Log out</a> from your profile.</p>
+			<form class="box" th:if="${copyLink}" th:action="@{/CreateCategory}" method="POST">
+				Parent ID: 
+				<select name="parentID" required>
+					<option th:each="id : ${idList}" th:value="${id}" th:text="${id}"></option>
+				</select><br>
+				Category name: <input type="text" name="name" required><br>
+				<input type="submit" name="Create category">
+			</form>
+		</section>
+		<footer>
+			<p><a th:href="@{/Logout}">Log out</a> from your profile.</p>
+		</footer>
 	</body>
 </html>

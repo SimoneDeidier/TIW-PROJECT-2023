@@ -81,7 +81,8 @@ public class RegisterNewUser extends HttpServlet {
 		
 		if(username == null || username.isEmpty() || password == null || password.isEmpty()) {
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("registrationError", "Username or password were missing, please refill the form!");
+			webContext.setVariable("registrationMessage", "Username or password were missing, please refill the form!");
+			webContext.setVariable("colorText", "redtext");
 			templateEngine.process(loginPagePath, webContext, response.getWriter());
 			return;
 		}
@@ -92,18 +93,21 @@ public class RegisterNewUser extends HttpServlet {
 		}
 		catch (SQLException e) {
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("registrationError", "An error occurred with the database connection, please refill the form!");
+			webContext.setVariable("registrationMessage", "An error occurred with the database connection, please refill the form!");
+			webContext.setVariable("colorText", "redtext");
 			templateEngine.process(loginPagePath, webContext, response.getWriter());
 			return;
 		}
 		if(!registration) {
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("registrationError", "Username is already taken, please provide a different one!");
+			webContext.setVariable("registrationMessage", "Username is already taken, please provide a different one!");
+			webContext.setVariable("colorText", "redtext");
 			templateEngine.process(loginPagePath, webContext, response.getWriter());
 			return;
 		}
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("registrationSuccesful", "Registration succesful! You can log in with the form above!");
+		webContext.setVariable("registrationMessage", "Registration succesful! You can log in with the form above!");
+		webContext.setVariable("colorText", "greentext");
 		templateEngine.process(loginPagePath, webContext, response.getWriter());
 	}
 	
