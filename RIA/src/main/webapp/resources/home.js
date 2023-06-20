@@ -1,5 +1,4 @@
 (function(){
-	console.log("CHIAMATA IIFE");
 	let pageOrchestrator = new PageOrchestrator();
 	let title, categoriesContainer, createCategoryForm;
 	
@@ -22,18 +21,18 @@
 			createCategoryForm = new CreateCategoryForm(document.getElementById("createCategoryForm"),
 													document.getElementById("createCategory"),
 													document.getElementById("parentIDCreation"));
-			createCategoryForm.setEvent();
+			createCategoryForm.setEvent(); //si dovrebbe fare dopo?
 		}
 		
 		this.refresh = function() {
 			categoriesContainer.update();
-			createCategoryForm.refresh(categoriesContainer.getCategoriesList());
+			//createCategoryForm.refresh(categoriesContainer.categoriesList);
 		}
 	}
 	
-	function CategoriesContainer(_categoriesContainer, _alertMessage) {
+	function CategoriesContainer(_categoriesContainer, _noCategoriesYetMessage) {
 		this.categoriesContainer = _categoriesContainer;
-		this.alertMessage = _alertMessage;
+		this.noCategoriesYetMessage = _noCategoriesYetMessage;
 		this.categoriesList;
 		
 		this.update = function() {
@@ -44,14 +43,14 @@
 				if(x.readyState === XMLHttpRequest.DONE) {
 					switch(x.status) {
 						case 200: {
-							console.log(response);
-							self.categoriesList = JSON.parse(response);
+							self.categoriesList = JSON.parse(response); //ci possiamo fidare di """liste""" di js?
 							if(self.categoriesList.length === 0) {
-								self.alertMessage.textContent = "There are no categories yet! Please insert a new one with the form below!";
+								self.noCategoriesYetMessage.textContent = "There are no categories yet! Please insert a new one with the form below!";
 								return
 							}
-							self.alertMessage.textContent = "";
+							self.noCategoriesYetMessage.textContent = "";
 							self.createCategoriesHTML(self.categoriesList);
+							createCategoryForm.refresh(self.categoriesList);
 							break;
 						}
 						case 500: {
@@ -70,7 +69,7 @@
 		
 		this.createCategoriesHTML = function(list) {
 			var self = this;
-			var span, br;
+			var span, br; //forse potrei metterle dentro funzione?
 			
 			self.categoriesContainer.innerHTML = "";		
 			list.forEach(function(category) {
@@ -78,7 +77,7 @@
 				br = document.createElement("br");
 				span.textContent = category.categoryID + " - " + category.name;
 				span.setAttribute('categoryID', category.categoryID);
-				// todo vanno inseriti tutti gli event listner!
+				// todo vanno inseriti tutti gli event listener!
 				self.categoriesContainer.appendChild(span);
 				self.categoriesContainer.appendChild(br);
 			});
@@ -128,16 +127,14 @@
 		}
 		
 		this.refresh = function(list) {
-			console.log(list);
 			var self = this;
-			var opt;
 			
 			self.parentIDCreation.innerHTML = "";	
 			list.forEach(function(category) {
-				opt = document.createElement("option");
-				opt.setAttribute('value', category.categoryID);
-				opt.setAttribute('text', category.categoryID);
-				self.parentIDCreation.appendChild(opt);
+				let option = document.createElement("option");
+				option.text = category.categoryID;
+				option.value = category.categoryID;
+				self.parentIDCreation.appendChild(option);
 			});
 		}
 	}

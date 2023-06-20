@@ -72,7 +72,6 @@ public class GetCategories extends HttpServlet {
 		}
 		Gson gson = new Gson();
 		String responseString = gson.toJson(categoriesList);
-		System.out.println(responseString);
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
