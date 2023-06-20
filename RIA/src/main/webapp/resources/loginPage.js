@@ -6,12 +6,14 @@
 	 
 	 let registrationButton= document.getElementById("registrationButton");
 	 let loginButton = document.getElementById("loginButton");
+	 let loginForm = document.getElementById("formLogin");
+	 let registrationForm = document.getElementById("formRegistration");
 	 
-	 registrationButton.addEventListener("submit", (e)=>{
+	 loginForm.addEventListener("submit", (e)=>{
  	 	e.preventDefault();
 	 });
 	
-	 registrationButton.addEventListener("submit", (e)=>{
+	 registrationForm.addEventListener("submit", (e)=>{
 	 	e.preventDefault();
 	 });
 	 
