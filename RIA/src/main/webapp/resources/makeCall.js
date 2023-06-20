@@ -5,9 +5,6 @@
  function makeCall(method, url, formElement, callback, reset = true) {
 	 
 	var req = new XMLHttpRequest(); // visible by closure
-	 
-	console.log("MAKE CALL")
-	console.log(formElement)
 	req.onreadystatechange = function() {
 		callback(req)
 	}; // closure

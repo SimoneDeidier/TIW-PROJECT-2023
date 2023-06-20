@@ -4,8 +4,8 @@
 		<meta charset="ISO-8859-1">
 		<title>Homepage</title>
 			<link rel="stylesheet" type="text/css" media="all" href="resources/mystyle.css" />
-			<script src="./resources/makeCall.js" charset="utf-8" defer></script>
 			<script src="./resources/home.js" charset="utf-8" defer></script>
+			<script src="./resources/makeCall.js" charset="utf-8" defer></script>
 	</head>
 	<body>
 		<header>
@@ -18,12 +18,12 @@
 			</div>
 		</section>
 		<section>
-			<form id="createCategoryForm" class="box" action="#">
+			<form id="createCategoryForm" class="box">
 				Parent ID: 
 				<select id="parentIDCreation" name="parentID" required>
 				</select><br>
 				Category name: <input type="text" name="name" required><br>
-				<input id="createCategory" type="submit" name="Create category">
+				<input id="createCategory" type="submit" value="Create category">
 			</form>
 		</section>
 	</body>
