@@ -5,6 +5,15 @@
  (function() {
 	 
 	 let registrationButton= document.getElementById("registrationButton");
+	 let loginButton = document.getElementById("loginButton");
+	 
+	 registrationButton.addEventListener("submit", (e)=>{
+ 	 	e.preventDefault();
+	 });
+	
+	 registrationButton.addEventListener("submit", (e)=>{
+	 	e.preventDefault();
+	 });
 	 
 	 loginButton.addEventListener('click', (e) => {
 		 let form = e.target.closest("form");
