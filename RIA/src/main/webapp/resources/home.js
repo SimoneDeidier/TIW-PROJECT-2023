@@ -39,7 +39,9 @@
 		this.categoriesList=[];
 		this.elementsBeingDraggedID;
 		this.categoriesBeingDragged = [];
+		this.dropHappened = false;
 		
+	
 		this.update = function() {
 			var self = this;
 			makeCall("GET", "GetCategories", null, function(x){
@@ -53,7 +55,6 @@
 							temp.forEach(function(category){
 								self.categoriesList.push(new Category(parseInt(category.categoryID),category.name,parseInt(category.parentID)));
 							});
-							console.log(self.categoriesList)
 							if(self.categoriesList.length === 0) {
 								self.noCategoriesYetMessage.textContent = "There are no categories yet! Please insert a new one with the form below!";
 								return
@@ -106,18 +107,62 @@
 				
 				//starting drag and drop feature	
 				span.setAttribute('draggable', true);
+				
 				span.addEventListener('dragend', (e)=>{
-					self.categoriesList.forEach(function(category){
-						if(self.elementsBeingDraggedID.includes(category.categoryID)){
-							let span= document.getElementById(category.categoryID);
-							span.classList.remove('redtext');
-						}
-					});
+					if(!self.dropHappened)
+						self.createCategoriesHTML(); //resets the Event Listeners
 				});
-				span.addEventListener('dragstart', (e)=>{ //missing feature : button to copy at level 0
+				
+				span.addEventListener('dragstart', (e)=>{ 
+					
+					//handling the creation of element to copy at level zero
+					/*let span = document.createElement("span");
+					let br = document.createElement("br");
+					span.textContent = "copy at level zero";
+					span.setAttribute('id', "level_zero");
+					span.addEventListener('dragenter', (e)=>{
+								e.preventDefault();
+								e.target.classList.add('drag-over');
+							});
+					span.addEventListener('dragover', (e)=>{
+						e.preventDefault();
+						e.target.classList.add('drag-over');
+					});
+					span.addEventListener('dragleave', (e)=>{
+							e.target.classList.remove('drag-over');
+						});
+					span.addEventListener('drop', (e)=>{
+							//remove drag-over from target
+							e.target.classList.remove('drag-over');
+							//remove redtext from categories that were being dragged
+							self.categoriesList.forEach(function(category){
+								if(self.elementsBeingDraggedID.includes(category.categoryID)){		
+									let span= document.getElementById(category.categoryID);
+	   								span.classList.remove('redtext');
+								};
+							});
+							if(confirm("Are you sure you want to copy into the category with the ID " + e.target.id + "?")){
+								let categoriesToAddList = self.getListOfNewCategories(0);
+								self.categoriesList.push.apply(self.categoriesList,categoriesToAddList); //adding the categories to add in the categoriesList
+								let unorderedArray=Array.from(self.categoriesList).sort((x,y) => x.categoryID - y.categoryID); //sorts in ascending order based on category IDs
+								self.categoriesList=self.orderList(unorderedArray,0);
+								self.dropHappened=true;
+								//I could use other functions, without all eventHandler and even hiding the form, to be decided
+								//self.createCategoriesHTML(); 
+							}
+							else{
+								self.createCategoriesHTML(); //resets the Event Listeners
+							}
+						});
+					self.categoriesContainerDiv.appendChild(span);
+					self.categoriesContainerDiv.appendChild(br);
+					*/
+					
+					//normal categories
 					let elementSelectedForDrag = parseInt(e.target.id);
 					//TODO check here on the categoryID
 					self.elementsBeingDraggedID = self.selectElementsBeingDragged(elementSelectedForDrag);
+					self.categoriesBeingDragged = [];
 					self.categoriesList.forEach(function(category){
 						if(self.elementsBeingDraggedID.includes(category.categoryID)){
 							setTimeout(() => {
@@ -125,12 +170,11 @@
    								span.classList.add('redtext');
 							}, 0);
 							self.categoriesBeingDragged.push(new Category(category.categoryID,category.name,category.parentID));
-							//remember to empty it after work
+							
 						}
 						else{
 							let span= document.getElementById(category.categoryID);
-							
-							//TODO REMEMBER TO REMOVE THEM AFTER DROP OR ANYWAY AFTER DRAG ENDS; HOW
+							//TODO REMEMBER TO REMOVE THEM AFTER DROP
 								
 							span.addEventListener('dragenter', (e)=>{
 								e.preventDefault();
@@ -163,12 +207,12 @@
 									self.categoriesList.push.apply(self.categoriesList,categoriesToAddList); //adding the categories to add in the categoriesList
 									let unorderedArray=Array.from(self.categoriesList).sort((x,y) => x.categoryID - y.categoryID); //sorts in ascending order based on category IDs
 									self.categoriesList=self.orderList(unorderedArray,0);
-									//I could use other functions, without all eventHandler and even hiding the form, to be decided
-									//self.createCategoriesHTML(self.categoriesList);
-									//createCategoryForm.refresh(self.categoriesList);//here it also manages the refresh of createCategoryForm 
+									self.dropHappened=true; //TODO -> quando rimetterlo a false?
+									//nel senso, caso che non clicchi il bottone ma refresha?
+									self.showTemporaryList(categoriesToAddList);
 								}
 								else{
-									self.update();
+									self.createCategoriesHTML(); //resets the Event Listeners
 								}
 							});
 						}
@@ -184,13 +228,68 @@
 			});
 		}
 		
+		this.showTemporaryList = function(categoriesToAddList){
+			var self=this;
+			self.categoriesContainerDiv.innerHTML = "";
+			self.categoriesList.forEach(function(category) {
+				let span = document.createElement("span");
+				let br = document.createElement("br");
+				span.textContent = category.categoryID + " - " + category.name;
+				span.setAttribute('id', category.categoryID);
+				
+				if(category.categoryID >= 10){
+					span.classList.add("moveright");
+					}
+				self.categoriesContainerDiv.appendChild(span);
+				self.categoriesContainerDiv.appendChild(br);
+				
+			})
+			//hide button
+			document.getElementById("createCategoryForm").classList.add('hide');
+			//Create text
+			let span = document.createElement("span");
+			span.textContent = "If you are pleased with the result, click the button to submit the changes to the database!";
+			span.classList.add('center');
+			self.categoriesContainerDiv.appendChild(span);
+			let br = document.createElement("br");
+			self.categoriesContainerDiv.appendChild(br);
+			//create button to save in database
+			let button = document.createElement("button");
+			button.textContent = "Click here";
+			button.classList.add('center')
+			button.addEventListener('click',(e)=>{
+				makeCallReady("POST", 'InsertCopiedCategory', JSON.stringify(categoriesToAddList), function(x){
+						if(x.readyState === XMLHttpRequest.DONE) {
+							let response = x.responseText;
+							
+							switch(x.status) {
+								case 200: {
+									pageOrchestrator.refresh();
+									break;
+								}
+								case 400: {
+									alert(response);
+									break;
+								}
+								case 500: {
+									alert(response);
+									break;
+								}
+							}
+						}
+					});
+			});
+			self.categoriesContainerDiv.appendChild(button);
+			
+			
+		}
+		
 		this.getListOfNewCategories = function(parentID){
-			self=this;
+			var self=this;
 			let list = [];
 			let newCategoryID,lastChildrenOfParent;
 			//todo check on lastChildrenOfParent
 			lastChildrenOfParent = self.findLastChildrenID(parentID);
-			console.log("Padre: " + parentID + " ultimo figlio: " + lastChildrenOfParent)
 			if(lastChildrenOfParent!=0){
 				newCategoryID= lastChildrenOfParent+1;
 			}
@@ -204,8 +303,11 @@
 				let newCategoryIDString = newCategoryID.toString();
 				let temp= idString.substring(categoryIDString.length);
 				let newIDString = newCategoryIDString + temp;
-				//todo check su max lenght (???)
-				list.push(new Category(parseInt(newIDString),category.name,parseInt(newIDString.slice(0,-1))));
+				//todo check su max lenght
+				if(newIDString.length !== 1)
+					list.push(new Category(parseInt(newIDString),category.name,parseInt(newIDString.slice(0,-1))));
+				else
+					list.push(new Category(parseInt(newIDString),category.name,0));
 				
 			});
 			return list;

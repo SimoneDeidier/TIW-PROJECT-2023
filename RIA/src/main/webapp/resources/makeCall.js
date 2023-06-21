@@ -23,3 +23,12 @@
 	}
     
  }
+ 
+ function makeCallReady(method, url, jsonData, cback) {
+	    var req = new XMLHttpRequest(); 
+	    req.onreadystatechange = function() {
+	      cback(req)
+	    }; // closure
+	    req.open(method, url);
+	    req.send(formData);
+}

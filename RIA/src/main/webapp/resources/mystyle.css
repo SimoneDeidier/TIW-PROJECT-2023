@@ -19,3 +19,13 @@ padding-left: 30px;
 .drag-over {
     border: dashed 3px red;
 }
+
+.hide {
+    display: none;
+}
+
+.center {
+	position: absolute;
+  	left: 50%;
+  	transform: translateX(-50%);
+}
