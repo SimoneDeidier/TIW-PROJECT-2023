@@ -36,7 +36,7 @@
 	function CategoriesContainer(_categoriesContainerDiv, _noCategoriesYetMessage) {
 		this.categoriesContainerDiv = _categoriesContainerDiv;
 		this.noCategoriesYetMessage = _noCategoriesYetMessage;
-		this.categoriesList;
+		this.categoriesList=[];
 		this.elementsBeingDraggedID;
 		this.categoriesBeingDragged = [];
 		
@@ -48,13 +48,18 @@
 				if(x.readyState === XMLHttpRequest.DONE) {
 					switch(x.status) {
 						case 200: {
-							self.categoriesList = JSON.parse(response); //ci possiamo fidare di """liste""" di js?
+							let temp = JSON.parse(response);
+							self.categoriesList=[]; //emptying the list
+							temp.forEach(function(category){
+								self.categoriesList.push(new Category(parseInt(category.categoryID),category.name,parseInt(category.parentID)));
+							});
+							console.log(self.categoriesList)
 							if(self.categoriesList.length === 0) {
 								self.noCategoriesYetMessage.textContent = "There are no categories yet! Please insert a new one with the form below!";
 								return
 							}
 							self.noCategoriesYetMessage.textContent = "";
-							self.createCategoriesHTML(self.categoriesList);
+							self.createCategoriesHTML();
 							createCategoryForm.refresh(self.categoriesList);//here it also manages the refresh of createCategoryForm 
 							break;
 						}
@@ -72,16 +77,24 @@
 			
 		};
 		
-		this.offlineUpdate = function(unorderedList,parentID){
+		this.orderList = function(unorderedList,parentID){
 			self=this;
-			//
+			let list=[];
+			
+			unorderedList.forEach(function(category){
+				if(category.parentID === parentID){
+					list.push(category);
+					list.push.apply(list,self.orderList(unorderedList,category.categoryID) );
+				}
+			});
+			return list;
 		}
 		
-		this.createCategoriesHTML = function(list) {
+		this.createCategoriesHTML = function() {
 			var self = this;
 			
 			self.categoriesContainerDiv.innerHTML = "";
-			list.forEach(function(category) {
+			self.categoriesList.forEach(function(category) {
 				let span = document.createElement("span");
 				let br = document.createElement("br");
 				span.textContent = category.categoryID + " - " + category.name;
@@ -93,7 +106,15 @@
 				
 				//starting drag and drop feature	
 				span.setAttribute('draggable', true);
-				span.addEventListener('dragstart', (e)=>{
+				span.addEventListener('dragend', (e)=>{
+					self.categoriesList.forEach(function(category){
+						if(self.elementsBeingDraggedID.includes(category.categoryID)){
+							let span= document.getElementById(category.categoryID);
+							span.classList.remove('redtext');
+						}
+					});
+				});
+				span.addEventListener('dragstart', (e)=>{ //missing feature : button to copy at level 0
 					let elementSelectedForDrag = parseInt(e.target.id);
 					//TODO check here on the categoryID
 					self.elementsBeingDraggedID = self.selectElementsBeingDragged(elementSelectedForDrag);
@@ -104,6 +125,7 @@
    								span.classList.add('redtext');
 							}, 0);
 							self.categoriesBeingDragged.push(new Category(category.categoryID,category.name,category.parentID));
+							//remember to empty it after work
 						}
 						else{
 							let span= document.getElementById(category.categoryID);
@@ -135,9 +157,19 @@
 		   								span.classList.remove('redtext');
 									};
 								});
-								//TODO CHECK ON e.target.id
-								let categoriesToAddList = self.getListOfNewCategories(e.target.id);
-								newList=self.offlineUpdate(Array.prototype.push.apply(self.categoriesList,categoriesToAddList),0);
+								if(confirm("Are you sure you want to copy into the category with the ID " + e.target.id + "?")){
+									//TODO CHECK ON e.target.id
+									let categoriesToAddList = self.getListOfNewCategories(parseInt(e.target.id));
+									self.categoriesList.push.apply(self.categoriesList,categoriesToAddList); //adding the categories to add in the categoriesList
+									let unorderedArray=Array.from(self.categoriesList).sort((x,y) => x.categoryID - y.categoryID); //sorts in ascending order based on category IDs
+									self.categoriesList=self.orderList(unorderedArray,0);
+									//I could use other functions, without all eventHandler and even hiding the form, to be decided
+									//self.createCategoriesHTML(self.categoriesList);
+									//createCategoryForm.refresh(self.categoriesList);//here it also manages the refresh of createCategoryForm 
+								}
+								else{
+									self.update();
+								}
 							});
 						}
 							//CREDO useless perchè uso un array
@@ -154,13 +186,11 @@
 		
 		this.getListOfNewCategories = function(parentID){
 			self=this;
-			//console.log(self.categoriesList);
-			//console.log(self.elementsBeingDraggedID);
-			//console.log(self.categoriesBeingDragged)
 			let list = [];
 			let newCategoryID,lastChildrenOfParent;
 			//todo check on lastChildrenOfParent
 			lastChildrenOfParent = self.findLastChildrenID(parentID);
+			console.log("Padre: " + parentID + " ultimo figlio: " + lastChildrenOfParent)
 			if(lastChildrenOfParent!=0){
 				newCategoryID= lastChildrenOfParent+1;
 			}
@@ -169,13 +199,13 @@
 			}
 			self.categoriesBeingDragged.forEach(function(category){
 				//calculating new IDs for the categories and adding them to the list
-				let idString = category.categoryID.toString();
-				let categoryIDString = self.categoriesBeingDragged[0].categoryID;
+				let idString = category.categoryID.toString();	
+				let categoryIDString = self.categoriesBeingDragged[0].categoryID.toString();
 				let newCategoryIDString = newCategoryID.toString();
-				let temp= idString.substring(categoryIDString.lenght);
+				let temp= idString.substring(categoryIDString.length);
 				let newIDString = newCategoryIDString + temp;
 				//todo check su max lenght (???)
-				list.push(new Category(parseInt(newIDString),category.name,parseInt(newIDString)/10));
+				list.push(new Category(parseInt(newIDString),category.name,parseInt(newIDString.slice(0,-1))));
 				
 			});
 			return list;
@@ -183,11 +213,11 @@
 		}
 		
 		this.findLastChildrenID = function(parentID){
-			self=this;
+			var self=this;
 			let maxIndex=0;
 			self.categoriesList.forEach(function(category){
-				if(category.parentID === parentID && category.parentID>maxIndex){
-					maxIndex=category.parentID;
+				if(category.parentID == parentID && category.categoryID > maxIndex){
+					maxIndex=category.categoryID;
 				}
 			});
 			return maxIndex;
