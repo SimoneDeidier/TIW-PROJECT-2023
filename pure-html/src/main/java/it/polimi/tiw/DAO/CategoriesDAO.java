@@ -149,23 +149,18 @@ public class CategoriesDAO {
 		else {
 			newCategoryID = (parentID * 10) + 1;
 		}
-		System.out.println("NEW CAT ID: " + newCategoryID);
 		
 		connection.setAutoCommit(false); // disable autocommit
 		try{
 			for(Category category : subCategories) {
 				String idString = Long.toString(category.getCategoryID());
-				System.out.println("ID: " + idString);
 				String categoryIDString = Long.toString(categoryID);
-				System.out.println("CAT ID: " + categoryIDString);
 				String newCategoryIDString = Long.toString(newCategoryID);
-				System.out.println("NEW CAT ID: " + newCategoryIDString);
 				String tmpString = idString.substring(categoryIDString.length());
 				String newIDString = newCategoryIDString + tmpString;
 				if(newIDString.length() >= MAX_ID_LENGTH) {
 					throw new TooLongIDException();
 				}
-				System.out.println("NEW ID: " + newIDString);
 				long newID = Long.parseLong(newIDString);
 				long newParentID = newID / 10;
 				
