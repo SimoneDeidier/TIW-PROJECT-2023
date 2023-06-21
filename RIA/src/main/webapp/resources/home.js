@@ -1,6 +1,7 @@
 (function(){
 	let pageOrchestrator = new PageOrchestrator();
 	let title, categoriesContainer, createCategoryForm;
+	let categoriesBeingCopied;
 	
 	window.addEventListener("load", () => {
 		if(sessionStorage.getItem("username") === null) {
@@ -36,6 +37,7 @@
 		this.categoriesContainerDiv = _categoriesContainerDiv;
 		this.noCategoriesYetMessage = _noCategoriesYetMessage;
 		this.categoriesList;
+		this.elementsBeingDraggedID;
 		
 		this.update = function() {
 			var self = this;
@@ -77,16 +79,48 @@
 				let span = document.createElement("span");
 				let br = document.createElement("br");
 				span.textContent = category.categoryID + " - " + category.name;
-				span.setAttribute('categoryID', category.categoryID);
+				span.setAttribute('id', category.categoryID);
 				
 				if(category.categoryID >= 10)
 					span.classList.add("moveright");
+				
+				//starting drag and drop feature	
+				span.setAttribute('draggable', true);
+				span.addEventListener('dragstart', (e)=>{
+					let elementSelectedForDrag = parseInt(e.target.id);
+					//TODO check here on the categoryID
+					self.elementsBeingDraggedID = self.selectElementsBeingDragged(elementSelectedForDrag);
+					self.elementsBeingDraggedID.forEach(function(categoryIDBeingCopied){
+						self.categoriesList.forEach(function(category){
+							if(category.categoryID === categoryIDBeingCopied){
+								setTimeout(() => {
+									let span= document.getElementById(category.categoryID);
+       								span.classList.add('redtext');
+    								}, 0);
+							};
+						});
+						
+					});
+					e.dataTransfer.setData('text/plain', JSON.stringify(self.elementsBeingDraggedID));
+				})
 				
 				// todo vanno inseriti tutti gli event listener!
 				
 				self.categoriesContainerDiv.appendChild(span);
 				self.categoriesContainerDiv.appendChild(br);
 			});
+		}
+		
+		this.selectElementsBeingDragged = function (categoryID){
+			var self=this;
+			let temp = [];
+			temp.push(categoryID);
+			self.categoriesList.forEach(function(categoryInList){
+				if(categoryInList.parentID === categoryID){
+					Array.prototype.push.apply(temp,self.selectElementsBeingDragged(categoryInList.categoryID) );
+				}	
+			});
+			return temp;
 		}
 		
 	}
