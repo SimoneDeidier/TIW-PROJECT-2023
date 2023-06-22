@@ -1,7 +1,6 @@
 (function(){
 	let pageOrchestrator = new PageOrchestrator();
 	let title, categoriesContainer, createCategoryForm;
-	//let categoriesBeingCopied; Useless?
 	
 	window.addEventListener("load", () => {
 		if(sessionStorage.getItem("username") === null) {
@@ -24,7 +23,7 @@
 			createCategoryForm = new CreateCategoryForm(document.getElementById("createCategoryForm"),
 													document.getElementById("createCategory"),
 													document.getElementById("parentIDCreation"));
-			createCategoryForm.setEvent(); //si dovrebbe fare dopo? Nel senso, non è una cosa da refresh?
+			createCategoryForm.setEvent();
 		}
 		
 		this.refresh = function() {
@@ -37,7 +36,6 @@
 		this.categoriesContainerDiv = _categoriesContainerDiv;
 		this.noCategoriesYetMessage = _noCategoriesYetMessage;
 		this.categoriesList=[];
-		this.elementsBeingDraggedID;
 		this.categoriesBeingDragged = [];
 		this.dropHappened = false;
 		
@@ -61,7 +59,7 @@
 							}
 							self.noCategoriesYetMessage.textContent = "";
 							self.createCategoriesHTML();
-							createCategoryForm.refresh(self.categoriesList);//here it also manages the refresh of createCategoryForm 
+							createCategoryForm.refresh(self.categoriesList);//it also manages the refresh of createCategoryForm 
 							break;
 						}
 						case 500: {
@@ -79,7 +77,7 @@
 		};
 		
 		this.orderList = function(unorderedList,parentID){
-			self=this;
+			var self=this;
 			let list=[];
 			
 			unorderedList.forEach(function(category){
@@ -108,63 +106,46 @@
 				//starting drag and drop feature	
 				span.setAttribute('draggable', true);
 				
-				span.addEventListener('dragend', (e)=>{
-					if(!self.dropHappened)
-						self.createCategoriesHTML(); //resets the Event Listeners
-				});
-				
 				span.addEventListener('dragstart', (e)=>{ 
+					let categoryIDBeingDragged = parseInt(e.target.id);
 					
-					//handling the creation of element to copy at level zero
-					/*let span = document.createElement("span");
-					let br = document.createElement("br");
-					span.textContent = "copy at level zero";
-					span.setAttribute('id', "level_zero");
-					span.addEventListener('dragenter', (e)=>{
-								e.preventDefault();
-								e.target.classList.add('drag-over');
-							});
-					span.addEventListener('dragover', (e)=>{
+					//check
+					let checkForModificationInAValueNotInTheList = false;
+					let checkForModificationInAValueInTheList = true;
+					self.categoriesList.forEach(function(category){
+						if(category.categoryID === categoryIDBeingDragged){ //list contains the id selected
+							checkForModificationInAValueNotInTheList = true;
+						}
+						if(document.getElementById(category.categoryID)===null){ //something was modified
+							checkForModificationInAValueInTheList = false;
+						}
+					})
+					if(!checkForModificationInAValueNotInTheList || !checkForModificationInAValueInTheList){
 						e.preventDefault();
-						e.target.classList.add('drag-over');
-					});
-					span.addEventListener('dragleave', (e)=>{
-							e.target.classList.remove('drag-over');
-						});
-					span.addEventListener('drop', (e)=>{
-							//remove drag-over from target
-							e.target.classList.remove('drag-over');
-							//remove redtext from categories that were being dragged
-							self.categoriesList.forEach(function(category){
-								if(self.elementsBeingDraggedID.includes(category.categoryID)){		
-									let span= document.getElementById(category.categoryID);
-	   								span.classList.remove('redtext');
-								};
-							});
-							if(confirm("Are you sure you want to copy into the category with the ID " + e.target.id + "?")){
-								let categoriesToAddList = self.getListOfNewCategories(0);
-								self.categoriesList.push.apply(self.categoriesList,categoriesToAddList); //adding the categories to add in the categoriesList
-								let unorderedArray=Array.from(self.categoriesList).sort((x,y) => x.categoryID - y.categoryID); //sorts in ascending order based on category IDs
-								self.categoriesList=self.orderList(unorderedArray,0);
-								self.dropHappened=true;
-								//I could use other functions, without all eventHandler and even hiding the form, to be decided
-								//self.createCategoriesHTML(); 
-							}
-							else{
-								self.createCategoriesHTML(); //resets the Event Listeners
-							}
-						});
+						alert("There was a problem with a category during the drag&drop operation, try again!");
+						self.createCategoriesHTML();
+						return;
+					}
+					
+					//actual execution
+					let categoriesIDBeingDragged = self.selectCategoriesIDsBeingDragged(categoryIDBeingDragged);
+					self.categoriesBeingDragged = []; //emptying the previous values 
+					
+					//Adding copy at level zero option
+					let categoriesListWithCopyHere = []
+					categoriesListWithCopyHere.push.apply(categoriesListWithCopyHere,self.categoriesList);
+					categoriesListWithCopyHere.push(new Category(0,"copy_here",-1));
+					let span = document.createElement("span");
+					let br = document.createElement("br");
+					span.textContent = "Copy to level zero";
+					span.setAttribute('id', 0);
 					self.categoriesContainerDiv.appendChild(span);
 					self.categoriesContainerDiv.appendChild(br);
-					*/
 					
-					//normal categories
-					let elementSelectedForDrag = parseInt(e.target.id);
-					//TODO check here on the categoryID
-					self.elementsBeingDraggedID = self.selectElementsBeingDragged(elementSelectedForDrag);
-					self.categoriesBeingDragged = [];
-					self.categoriesList.forEach(function(category){
-						if(self.elementsBeingDraggedID.includes(category.categoryID)){
+					
+					categoriesListWithCopyHere.forEach(function(category){
+						//addition of red text for categories being dragged
+						if(categoriesIDBeingDragged.includes(category.categoryID)){
 							setTimeout(() => {
 								let span= document.getElementById(category.categoryID);
    								span.classList.add('redtext');
@@ -172,10 +153,9 @@
 							self.categoriesBeingDragged.push(new Category(category.categoryID,category.name,category.parentID));
 							
 						}
+						//event listeners for the others
 						else{
 							let span= document.getElementById(category.categoryID);
-							//TODO REMEMBER TO REMOVE THEM AFTER DROP
-								
 							span.addEventListener('dragenter', (e)=>{
 								e.preventDefault();
 								e.target.classList.add('drag-over');
@@ -196,29 +176,58 @@
 								e.target.classList.remove('drag-over');
 								//remove redtext from categories that were being dragged
 								self.categoriesList.forEach(function(category){
-									if(self.elementsBeingDraggedID.includes(category.categoryID)){		
+									if(categoriesIDBeingDragged.includes(category.categoryID)){		
 										let span= document.getElementById(category.categoryID);
 		   								span.classList.remove('redtext');
 									};
 								});
-								if(confirm("Are you sure you want to copy into the category with the ID " + e.target.id + "?")){
-									//TODO CHECK ON e.target.id
-									let categoriesToAddList = self.getListOfNewCategories(parseInt(e.target.id));
+								
+								//if user doesn't confirm drop the changes
+								if(!confirm("Are you sure you want to copy into the category with the ID " + e.target.id + "?")){ 
+									self.createCategoriesHTML(); //resets the Event Listeners
+									return;
+								}
+								
+								let categoryIDOfDrop = parseInt(e.target.id);
+								
+								//other check, always important to preserve database integrity
+								self.categoriesList.forEach(function(category){
+									if(category.categoryID === categoryIDOfDrop){ //list contains the id selected
+										checkForModificationInAValueNotInTheList = true;
+									}
+									if(document.getElementById(category.categoryID)===null){ //something was modified
+										checkForModificationInAValueInTheList = false;
+									}
+								})
+								if(!checkForModificationInAValueNotInTheList || !checkForModificationInAValueInTheList){
+									alert("There was a problem during the drag & drop, try again!");
+									self.createCategoriesHTML();
+									return;
+								}
+								
+								//actual execution
+								try{
+									let categoriesToAddList = self.getListOfNewCategories(categoryIDOfDrop);
 									self.categoriesList.push.apply(self.categoriesList,categoriesToAddList); //adding the categories to add in the categoriesList
 									let unorderedArray=Array.from(self.categoriesList).sort((x,y) => x.categoryID - y.categoryID); //sorts in ascending order based on category IDs
 									self.categoriesList=self.orderList(unorderedArray,0);
-									self.dropHappened=true; //TODO -> quando rimetterlo a false?
-									//nel senso, caso che non clicchi il bottone ma refresha?
-									self.showTemporaryList(categoriesToAddList);
-								}
-								else{
+									self.dropHappened=true;
+									self.showTemporaryList(categoriesToAddList,categoryIDBeingDragged,categoryIDOfDrop);
+								} catch (error){
+									alert(error);
 									self.createCategoriesHTML(); //resets the Event Listeners
 								}
+									
 							});
 						}
-							//CREDO useless perchè uso un array
-						//e.dataTransfer.setData('text/plain', JSON.stringify(self.elementsBeingDraggedID));
 					});
+				});
+				
+				span.addEventListener('dragend', (e)=>{
+					if(!self.dropHappened){
+						self.createCategoriesHTML(); //resets the Event Listeners in the case drag started but drop didn't happen
+					}
+					self.dropHappened=false;
 				});
 				
 				// todo vanno inseriti gli altri event listener!
@@ -228,7 +237,7 @@
 			});
 		}
 		
-		this.showTemporaryList = function(categoriesToAddList){
+		this.showTemporaryList = function(categoriesToAddList,categoryID,parentID){
 			var self=this;
 			self.categoriesContainerDiv.innerHTML = "";
 			self.categoriesList.forEach(function(category) {
@@ -250,15 +259,21 @@
 			let span = document.createElement("span");
 			span.textContent = "If you are pleased with the result, click the button to submit the changes to the database!";
 			span.classList.add('center');
+			span.classList.add('morespaceup')
 			self.categoriesContainerDiv.appendChild(span);
 			let br = document.createElement("br");
 			self.categoriesContainerDiv.appendChild(br);
 			//create button to save in database
 			let button = document.createElement("button");
-			button.textContent = "Click here";
+			button.textContent = "Confirm";
 			button.classList.add('center')
+			button.classList.add('morespaceup')
 			button.addEventListener('click',(e)=>{
-				makeCallReady("POST", 'InsertCopiedCategory', JSON.stringify(categoriesToAddList), function(x){
+				let data = new FormData();
+				data.append("jsonData",JSON.stringify(categoriesToAddList));
+				data.append("categoryID",categoryID);
+				data.append("parentID",parentID);
+				makeCallReady("POST", 'InsertCopiedCategory', data, function(x){
 						if(x.readyState === XMLHttpRequest.DONE) {
 							let response = x.responseText;
 							
@@ -280,38 +295,43 @@
 					});
 			});
 			self.categoriesContainerDiv.appendChild(button);
-			
-			
 		}
 		
 		this.getListOfNewCategories = function(parentID){
 			var self=this;
 			let list = [];
 			let newCategoryID,lastChildrenOfParent;
-			//todo check on lastChildrenOfParent
 			lastChildrenOfParent = self.findLastChildrenID(parentID);
+			if(lastChildrenOfParent % 10 == 9){
+				throw new Error("The drop position selected already has nine children!")
+			}
 			if(lastChildrenOfParent!=0){
 				newCategoryID= lastChildrenOfParent+1;
 			}
 			else{
 				newCategoryID = (parentID*10) + 1;
 			}
-			self.categoriesBeingDragged.forEach(function(category){
-				//calculating new IDs for the categories and adding them to the list
-				let idString = category.categoryID.toString();	
-				let categoryIDString = self.categoriesBeingDragged[0].categoryID.toString();
-				let newCategoryIDString = newCategoryID.toString();
-				let temp= idString.substring(categoryIDString.length);
-				let newIDString = newCategoryIDString + temp;
-				//todo check su max lenght
-				if(newIDString.length !== 1)
-					list.push(new Category(parseInt(newIDString),category.name,parseInt(newIDString.slice(0,-1))));
-				else
-					list.push(new Category(parseInt(newIDString),category.name,0));
-				
-			});
-			return list;
-			
+			try{
+				self.categoriesBeingDragged.forEach(function(category){
+					//calculating new IDs for the categories and adding them to the list
+					let idString = category.categoryID.toString();	
+					let categoryIDString = self.categoriesBeingDragged[0].categoryID.toString();
+					let newCategoryIDString = newCategoryID.toString();
+					let temp= idString.substring(categoryIDString.length);
+					let newIDString = newCategoryIDString + temp;
+					if(newIDString.length >= 18){
+						throw new Error("temp")
+					}
+					if(newIDString.length !== 1)
+						list.push(new Category(parseInt(newIDString),category.name,parseInt(newIDString.slice(0,-1))));
+					else
+						list.push(new Category(parseInt(newIDString),category.name,0));
+					
+				});
+				return list;
+			}catch(error){
+				throw new Error("This is due to the fact that the website support category IDs only up to 18 digits. Select another destination.")
+			}
 		}
 		
 		this.findLastChildrenID = function(parentID){
@@ -325,13 +345,13 @@
 			return maxIndex;
 		}
 		
-		this.selectElementsBeingDragged = function (categoryID){
+		this.selectCategoriesIDsBeingDragged = function (categoryID){
 			var self=this;
 			let temp = [];
 			temp.push(categoryID);
 			self.categoriesList.forEach(function(categoryInList){
 				if(categoryInList.parentID === categoryID){
-					Array.prototype.push.apply(temp,self.selectElementsBeingDragged(categoryInList.categoryID) );
+					Array.prototype.push.apply(temp,self.selectCategoriesIDsBeingDragged(categoryInList.categoryID) );
 				}	
 			});
 			return temp;
@@ -394,6 +414,9 @@
 				option.value = category.categoryID;
 				self.parentIDCreation.appendChild(option);
 			});
+			if(self.createCategoryForm.classList.contains('hide')){
+				self.createCategoryForm.classList.remove('hide');
+			}
 		}
 	}
 	

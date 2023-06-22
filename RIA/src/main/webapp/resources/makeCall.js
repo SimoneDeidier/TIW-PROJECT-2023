@@ -30,5 +30,5 @@
 	      cback(req)
 	    }; // closure
 	    req.open(method, url);
-	    req.send(formData);
+	    req.send(jsonData);
 }

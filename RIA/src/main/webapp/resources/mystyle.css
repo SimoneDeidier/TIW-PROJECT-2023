@@ -1,6 +1,4 @@
-.redtext {color: red;}
-
-.greentext {color: green;}
+.redtext { color : red;}
 
 .box {
 border-width: 2px;
@@ -28,4 +26,8 @@ padding-left: 30px;
 	position: absolute;
   	left: 50%;
   	transform: translateX(-50%);
+}
+
+.morespaceup {
+	margin-top : 7px;
 }
