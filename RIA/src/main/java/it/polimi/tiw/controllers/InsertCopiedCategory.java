@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,9 +75,7 @@ public class InsertCopiedCategory extends HttpServlet {
 	    Category[] categoryArray = gson.fromJson(request.getParameter("jsonData"), Category[].class);
 	    ArrayList<Category> categoriesToBeInsertedList = new ArrayList<>(Arrays.asList(categoryArray));
 	    
-	    String categoryIDString = request.getParameter("categoryID"); 
-	    String parentIDString = request.getParameter("parentID"); 
-	    if(categoriesToBeInsertedList.size()==0 || categoryIDString == null || categoryIDString.isEmpty() || parentIDString == null || parentIDString.isEmpty()) {
+	    if(categoriesToBeInsertedList.size()==0 ) {
 	    	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Error during the process, retry doing the operation!");
 			return;
@@ -88,25 +87,51 @@ public class InsertCopiedCategory extends HttpServlet {
 				return;
 	    	}
 	    }
-	    long categoryID = 0, parentID = 0;
-		try {
-			categoryID = Long.parseLong(categoryIDString);
-			parentID = Long.parseLong(parentIDString);
-		} catch (NumberFormatException e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Error during the process, retry doing the operation!");
-			return;
-		}
-		if( categoryID<=0 || parentID <0) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Error during the process, retry doing the operation!");
-			return;
-		}
+	    
+	    //make sure it's ordered by categoryID
+	    categoriesToBeInsertedList.sort(Comparator.comparing(Category::getCategoryID));
+	  
 		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
-		//TODO do all the operation copy and insert did
-	    
-	    //compare lists -> if equal yeah
-	    
+		List<Category> allCategoryList = new ArrayList<>();
+		try {
+			allCategoryList = categoriesDAO.findAllCategories();
+		} catch (SQLException e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println("An error occurred with the database connection, please refill the form!");
+			return;
+		}
+		for(Category category:categoriesToBeInsertedList) {
+			for(Category cat : allCategoryList) {
+				if(category.getCategoryID() == cat.getCategoryID()) { //the category ID we're trying to insert it's already in the list
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					response.getWriter().println("Error during the process, retry doing the operation!");
+					return;
+				}
+			}
+		}
+		//checking first element to be added
+		if(Long.toString(categoriesToBeInsertedList.get(0).getCategoryID()).length() != 1) {
+			boolean check= false;
+			long IDToCheck = categoriesToBeInsertedList.get(0).getCategoryID() / 10;
+			for(Category category : allCategoryList) {
+				if(category.getCategoryID() == IDToCheck)
+					check=true;
+			}
+			if(!check) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Error during the process, retry doing the operation!");
+				return;
+			}
+		}
+		//Checking all other elements
+		for(Category category:categoriesToBeInsertedList) {
+			if(!Long.toString(category.getCategoryID()).contains(Long.toString(categoriesToBeInsertedList.get(0).getCategoryID()))) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Error during the process, retry doing the operation!");
+				return;
+			}
+		}
+		
 	    try {
 			categoriesDAO.insertCopiedCategory(categoriesToBeInsertedList);
 		} catch (SQLException e) {
