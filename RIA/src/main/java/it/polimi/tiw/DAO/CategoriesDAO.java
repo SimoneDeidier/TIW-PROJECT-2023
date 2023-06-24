@@ -124,8 +124,13 @@ public class CategoriesDAO {
 		return result;
 	}
 	
-	
-	
+	public void changeCategoryName(long categoryID, String newName) throws SQLException {
+		String queryString = "UPDATE Category SET name = ? WHERE categoryID = ?";
+		PreparedStatement preparedStatement = connection.prepareStatement(queryString);
+		preparedStatement.setString(1,  newName);
+		preparedStatement.setLong(2, categoryID);
+		preparedStatement.executeUpdate();
+	}
 	
 
 }

@@ -1,33 +1,82 @@
-.redtext { color : red;}
-
-.box {
-border-width: 2px;
-border-style: solid;
-border-color: black;
-height: 75px;
-width: 300px;
-padding-top: 5px;
-padding-left: 5px;
+.redtext { 
+	color : red;
 }
 
 .moveright {
-padding-left: 30px;
+	padding-left: 2.5%;
 }
 
 .drag-over {
-    border: dashed 3px red;
+   	font-size: 19px;
+   	background-color: rgba(0,191,165,0.2);
 }
 
 .hide {
     display: none;
 }
 
-.center {
-	position: absolute;
-  	left: 50%;
-  	transform: translateX(-50%);
+.marginUp {
+	margin-top: 5%;
 }
 
-.morespaceup {
-	margin-top : 7px;
+.marginDown {
+	margin-bottom: 3%;
+}
+
+.center {
+	text-align: center;
+}
+
+.loginSection {
+	width: 50%;
+	float: left;
+	text-align: center;
+}
+
+.loginSection.dropdown * {
+	margin: auto;
+}
+
+.italic {
+	font-style: italic;
+}
+
+.box {
+	border: 2px solid black;
+	padding: 13px;
+	display: inline-block;
+	margin: 0 auto;
+}
+
+.loginFooter {
+	margin-top: 75px;
+}
+
+.overflowHidden {
+	overflow: hidden;
+}
+
+.nextToEachOther {
+	width: 50%;
+	float: left;
+}
+
+.logout {
+	text-align: right;
+}
+
+.categoryContainer {
+	width: 70%;
+	float: left;
+}
+
+.creationForm {
+	width: 30%;
+	float: left;
+	text-align: center;
+	margin-top: 5%;
+}
+
+.marginRight {
+	margin-right: 3%;
 }

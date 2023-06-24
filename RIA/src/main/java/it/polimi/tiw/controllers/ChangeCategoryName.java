@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Objects;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,21 +16,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import it.polimi.tiw.DAO.CategoriesDAO;
-import it.polimi.tiw.exceptions.TooLongIDException;
+import it.polimi.tiw.beans.Category;
 
 /**
- * Servlet implementation class CreateCategory
+ * Servlet implementation class ChangeCategoryName
  */
-@WebServlet("/CreateCategory")
+@WebServlet("/ChangeCategoryName")
 @MultipartConfig
-public class CreateCategory extends HttpServlet {
+public class ChangeCategoryName extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection = null;
+	private Connection connection;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CreateCategory() {
+    public ChangeCategoryName() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -66,51 +66,46 @@ public class CreateCategory extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String parentIDString = request.getParameter("parentID");
-		String nameString = request.getParameter("name");
+		String idString = request.getParameter("changedID");
+		String newNameString = request.getParameter("newName");
 		
-		if(parentIDString == null || parentIDString.isEmpty() || nameString == null || nameString.isEmpty()) {
+		if(idString == null || idString.isEmpty() || newNameString == null || newNameString.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Parent ID or name were missing, please refill the form!");
+			response.getWriter().println("Category ID or new name were missing, please redo the change name operation!");
 			return;
 		}
-		long parentID = 0;
-		if(!Objects.equals(parentIDString, "root")) {
-			try {
-				parentID = Long.parseLong(parentIDString);
-			}
-			catch (NumberFormatException e) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				response.getWriter().println("Parent ID's format is not acceptable, please refill the form!");
-				return;
-			}
-			if(parentID <= 0) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				response.getWriter().println("Parent ID's format is not acceptable, please refill the form!");
-				return;
-			}
+		long id = 0;
+		try {
+			id = Long.parseLong(idString);
+		}
+		catch (NumberFormatException e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Category ID's format is not acceptable, please redo the change name operation!");
+			return;
 		}
 		CategoriesDAO categoriesDAO = new CategoriesDAO(connection);
-		boolean creationOk;
 		try {
-			creationOk = categoriesDAO.createCategory(nameString, parentID);
+			List<Category> categories = categoriesDAO.findAllCategories();
+			boolean check = false;
+			for(Category category : categories) {
+				if(category.getCategoryID() == id) {
+					check = true;
+					break;
+				}
+			}
+			if(!check) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Unknown category ID, please redo the change name operation!");
+				return;
+			}
+			categoriesDAO.changeCategoryName(id, newNameString);
+			response.setStatus(HttpServletResponse.SC_OK);
 		}
 		catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			response.getWriter().println("An error occurred with the database connection, please refill the form!");
+			response.getWriter().println("An error occurred with the database connection, please redo the change name operation!");
 			return;
 		}
-		catch (TooLongIDException e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("The chosen parent can't have childrens, this branch has reached its maximum length!");
-			return;
-		}
-		if(!creationOk) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("An error occurred with the creation of the new category, please remember that a category may have a maximum of nine childrens!");
-			return;
-		}
-		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	
 	public void destroy() {

@@ -97,7 +97,7 @@ public class InsertCopiedCategory extends HttpServlet {
 			allCategoryList = categoriesDAO.findAllCategories();
 		} catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			response.getWriter().println("An error occurred with the database connection, please refill the form!");
+			response.getWriter().println("An error occurred with the database connection, please retry doing the operation!");
 			return;
 		}
 		for(Category category:categoriesToBeInsertedList) {
@@ -136,7 +136,7 @@ public class InsertCopiedCategory extends HttpServlet {
 			categoriesDAO.insertCopiedCategory(categoriesToBeInsertedList);
 		} catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			response.getWriter().println("An error occurred with the database connection, please refill the form!");
+			response.getWriter().println("An error occurred with the database connection, please retry doing the operation!");
 			return;
 		}
 	    response.setStatus(HttpServletResponse.SC_OK);

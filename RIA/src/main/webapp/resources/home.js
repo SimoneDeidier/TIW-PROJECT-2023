@@ -1,6 +1,6 @@
 (function(){
 	let pageOrchestrator = new PageOrchestrator();
-	let title, categoriesContainer, createCategoryForm;
+	let title, categoriesContainer, createCategoryForm, logoutManager;
 	
 	window.addEventListener("load", () => {
 		if(sessionStorage.getItem("username") === null) {
@@ -24,11 +24,13 @@
 													document.getElementById("createCategory"),
 													document.getElementById("parentIDCreation"));
 			createCategoryForm.setEvent();
+			logoutManager = new LogoutManager(document.getElementById("logout"));
+			logoutManager.setEvent();
 		}
 		
 		this.refresh = function() {
-			categoriesContainer.update();
-			//remember that it's asynchronous
+			categoriesContainer.update(); //remember that it's asynchronous
+			logoutManager.show();
 		}
 	}
 	
@@ -101,7 +103,7 @@
 				
 				if(category.categoryID >= 10){
 					span.classList.add("moveright");
-					}
+				}
 				
 				//starting drag and drop feature	
 				span.setAttribute('draggable', true);
@@ -110,17 +112,18 @@
 					let categoryIDBeingDragged = parseInt(e.target.id);
 					
 					//check
-					let checkForModificationInAValueNotInTheList = false;
-					let checkForModificationInAValueInTheList = true;
+					let checkSelectedNotModified = false;
+					let checkModifications = true;
 					self.categoriesList.forEach(function(category){
-						if(category.categoryID === categoryIDBeingDragged){ //list contains the id selected
-							checkForModificationInAValueNotInTheList = true;
+						// TODO samu check se questo serve ancora
+						if(category.categoryID === categoryIDBeingDragged){ 
+							checkSelectedNotModified = true;
 						}
-						if(document.getElementById(category.categoryID)===null){ //something was modified
-							checkForModificationInAValueInTheList = false;
+						if(document.getElementById(category.categoryID) === null){
+							checkModifications = false;
 						}
 					})
-					if(!checkForModificationInAValueNotInTheList || !checkForModificationInAValueInTheList){
+					if(!checkSelectedNotModified || !checkModifications){
 						e.preventDefault();
 						alert("There was a problem with a category during the drag&drop operation, try again!");
 						self.createCategoriesHTML();
@@ -193,13 +196,13 @@
 								//other check, always important to preserve database integrity
 								self.categoriesList.forEach(function(category){
 									if(category.categoryID === categoryIDOfDrop){ //list contains the id selected
-										checkForModificationInAValueNotInTheList = true;
+										checkSelectedNotModified = true;
 									}
 									if(document.getElementById(category.categoryID)===null){ //something was modified
-										checkForModificationInAValueInTheList = false;
+										checkModifications = false;
 									}
 								})
-								if(!checkForModificationInAValueNotInTheList || !checkForModificationInAValueInTheList){
+								if(!checkSelectedNotModified || !checkModifications){
 									alert("There was a problem during the drag & drop, try again!");
 									self.createCategoriesHTML();
 									return;
@@ -230,7 +233,76 @@
 					self.dropHappened=false;
 				});
 				
-				// todo vanno inseriti gli altri event listener!
+				span.addEventListener('click', (e) => {
+					let clickedCategoryID = parseInt(e.target.id);
+					let check = false;
+					self.categoriesList.forEach(function(category){
+						if(category.categoryID === clickedCategoryID) {
+							check = true;
+							return;
+						}
+					});
+					if(!check) {
+						alert("There was a problem during the name changing operation, please try again!");
+						self.createCategoriesHTML();
+						return;
+					}
+					let toChangeNameSpan = document.getElementById(clickedCategoryID);
+					toChangeNameSpan.setAttribute("draggable", false);
+					toChangeNameSpan.innerText = clickedCategoryID.toString() + " - ";
+					let inputArea = document.createElement('input');
+					inputArea.setAttribute('type', 'text');
+					let oldName = null;
+					self.categoriesList.forEach(function(category) {
+						if(category.categoryID === clickedCategoryID) {
+							oldName = category.name;
+							return;
+						}
+					});
+					inputArea.setAttribute('value', oldName);
+					toChangeNameSpan.appendChild(inputArea);
+					inputArea.addEventListener('click', (e) => {
+						e.stopPropagation();
+					}, true);
+					inputArea.focus();
+					inputArea.addEventListener('focusout', (e) => {
+						console.log("CALLED FOCUS OUT")
+						let newName = inputArea.value;
+						if(newName === null || newName === oldName) {
+							console.log("ENTRATO IF")
+							self.createCategoriesHTML();
+						}
+						else {
+							let data = new FormData();
+							data.append("changedID", clickedCategoryID);
+							data.append("newName", newName);
+							makeCallReady('POST', 'ChangeCategoryName', data, function(x) {
+								if(x.readyState === XMLHttpRequest.DONE) {
+									let response = x.responseText;
+									
+									switch(x.status) {
+										case 200: {
+											break;
+										}
+										case 400: {
+											alert(response);
+											break;
+										}
+										case 500: {
+											alert(response);
+											break;
+										}
+										default: {
+											 alert("Unknown error occurred.");
+											 break;
+										 }
+									}
+									pageOrchestrator.refresh();
+								}
+							});
+						}
+					});
+				});
 				
 				self.categoriesContainerDiv.appendChild(span);
 				self.categoriesContainerDiv.appendChild(br);
@@ -253,21 +325,22 @@
 				self.categoriesContainerDiv.appendChild(br);
 				
 			})
-			//hide button
-			document.getElementById("createCategoryForm").classList.add('hide');
+			//hide form
+			document.getElementById("createCategoryForm").classList.replace("box", "hide");
+			
+			//hide logout
+			document.getElementById("logoutMessage").classList.add('hide');
+			//create box
+			let div = document.createElement("div");
+			div.classList.add("box");
+			div.classList.add("marginRight");
 			//Create text
-			let span = document.createElement("span");
-			span.textContent = "If you are pleased with the result, click the button to submit the changes to the database!";
-			span.classList.add('center');
-			span.classList.add('morespaceup')
-			self.categoriesContainerDiv.appendChild(span);
-			let br = document.createElement("br");
-			self.categoriesContainerDiv.appendChild(br);
+			let par = document.createElement("p");
+			par.textContent = "If you are pleased with the result, click the button to submit the changes to the database!";
+			div.appendChild(par);
 			//create button to save in database
 			let button = document.createElement("button");
 			button.textContent = "Confirm";
-			button.classList.add('center')
-			button.classList.add('morespaceup')
 			button.addEventListener('click',(e)=>{
 				let data = new FormData();
 				data.append("jsonData",JSON.stringify(categoriesToAddList));
@@ -279,7 +352,7 @@
 							
 							switch(x.status) {
 								case 200: {
-									pageOrchestrator.refresh();
+									div.remove();
 									break;
 								}
 								case 400: {
@@ -290,11 +363,17 @@
 									alert(response);
 									break;
 								}
+								default: {
+									 alert("Unknown error occurred.");
+									 break;
+								 }
 							}
+							pageOrchestrator.refresh();
 						}
 					});
 			});
-			self.categoriesContainerDiv.appendChild(button);
+			div.appendChild(button);
+			document.getElementById("rightSection").appendChild(div);
 		}
 		
 		this.getListOfNewCategories = function(parentID){
@@ -390,6 +469,10 @@
 									alert(response);
 									break;
 								}
+								default: {
+									 alert("Unknown error occurred.");
+									 break;
+								 }
 							}
 						}
 					});
@@ -415,7 +498,43 @@
 				self.parentIDCreation.appendChild(option);
 			});
 			if(self.createCategoryForm.classList.contains('hide')){
-				self.createCategoryForm.classList.remove('hide');
+				self.createCategoryForm.classList.replace('hide', 'box');
+			}
+		}
+	}
+	
+	
+	function LogoutManager(_logoutButton){
+		this.logoutButton = _logoutButton;
+		
+		this.setEvent = function() {
+			let self = this;
+			
+			self.logoutButton.addEventListener('click', (e) => {
+				makeCall('GET', 'Logout', null, function(x){
+					if(x.readyState === XMLHttpRequest.DONE) {
+					 let response = x.responseText;
+					 
+					 switch(x.status) {
+						 case 200: {
+							 sessionStorage.removeItem('username');
+							 window.location.href = "index.html";
+							 break;
+						 }
+						 default: {
+							 alert("Unknown error occurred.");
+							 break;
+						 }
+					 }
+				 }
+				})
+			});
+		}
+		
+		this.show = function() {
+			let message = document.getElementById("logoutMessage");
+			if(message.classList.contains('hide')) {
+				message.classList.remove('hide');
 			}
 		}
 	}

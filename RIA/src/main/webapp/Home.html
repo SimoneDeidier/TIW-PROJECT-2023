@@ -8,23 +8,26 @@
 			<script src="./resources/makeCall.js" charset="utf-8" defer></script>
 	</head>
 	<body>
-		<header>
-			<h1 id="welcomeTitle"></h1>
+		<header class="overflowHidden">
+			<h1 class="nextToEachOther" id="welcomeTitle"></h1>
+			<p class="nextToEachOther logout" id="logoutMessage"><a id="logout" href="#">Log out</a> from your profile.</p>
 		</header>
-		<section>
-			<h3>All your categories:</h3>
-			<p id="noCategories"></p>
-			<div id="categoriesContainer">
-			</div>
-		</section>
-		<section>
-			<form id="createCategoryForm" class="box morespaceup">
-				Parent ID: 
-				<select id="parentIDCreation" name="parentID" required>
-				</select><br>
-				Category name: <input type="text" name="name" required><br>
-				<input id="createCategory" type="submit" value="Create category">
-			</form>
+		<section class="overflowHidden">
+			<article class="categoryContainer">
+				<h3 class="marginDown">All your categories:</h3>
+				<p id="noCategories"></p>
+				<div id="categoriesContainer">
+				</div>
+			</article>
+			<article id="rightSection" class="creationForm">
+				<form id="createCategoryForm" class="box">
+					Parent ID: 
+					<select id="parentIDCreation" name="parentID" required>
+					</select><br>
+					Category name: <input type="text" name="name" required><br>
+					<input id="createCategory" type="submit" value="Create category">
+				</form>
+			</article>
 		</section>
 	</body>
 </html>

@@ -7,28 +7,30 @@
 		<script src="./resources/makeCall.js" charset="utf-8" defer></script>
 		<script src="./resources/loginPage.js" charset="utf-8" defer></script>
 	</head>
-	<body class='center'>  <!--   REMOVE HERE FOR PAGE BACK TO THE LEFT -->
+	<body>
 		<header>
-			<h1>Classification of satellite images</h1>
+			<h1 class='center'>Classification of satellite images</h1>
 		</header>
-		<section>
-		<h2>Please, login to access the Homepage!</h2>
-			<form id="formLogin">
-				username: <input id="username" type="text" name="username" required><br>
-				password: <input id="password" type="password" name="password" required><br>
-				<input id="loginButton" type="submit" value="login">
-			</form>
+		<section class="overflowHidden">
+			<div class="loginSection">
+				<h2>Please, login to access the Homepage!</h2>
+				<form class="box" id="formLogin">
+					username: <input id="username" type="text" name="username" required><br>
+					password: <input id="password" type="password" name="password" required><br>
+					<input id="loginButton" type="submit" value="login">
+				</form>
+			</div>
+			<div class="loginSection">
+				<h2>Are you not registered? Register here:</h2>
+				<form class="box" id=formRegistration>
+					username: <input id="newUsername" type="text" name="username" required><br>
+					password: <input type="password" name="password" required><br>
+					<input id="registrationButton" type="submit" value="register">
+				</form>
+			</div>
 		</section>
-		<section>
-			<h2>Are you not registered? Register here:</h2>
-			<form id=formRegistration>
-				username: <input id="newUsername" type="text" name="username" required><br>
-				password: <input type="password" name="password" required><br>
-				<input id="registrationButton" type="submit" value="register">
-			</form>
-		</section>
-		<footer>
-			<p>Web Information Technologies project - developed by group 9 - De Ciechi Samuele - Deidier Simone</p>
+		<footer class="loginFooter">
+			<p class='center italic'>Web Information Technologies project - developed by group 9 - De Ciechi Samuele - Deidier Simone</p>
 		</footer>
 	</body>
 </html>
