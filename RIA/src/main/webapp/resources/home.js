@@ -114,6 +114,7 @@
 					//check
 					let checkSelectedNotModified = false;
 					let checkModifications = true;
+					let lastCheckedID = -1;
 					self.categoriesList.forEach(function(category){
 						// TODO samu check se questo serve ancora
 						if(category.categoryID === categoryIDBeingDragged){ 
@@ -122,6 +123,12 @@
 						if(document.getElementById(category.categoryID) === null){
 							checkModifications = false;
 						}
+						if(lastCheckedID !== -1){ //all elements but the first
+							if(parseInt(document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling.id) !== category.categoryID){
+								checkModifications=false;
+							}
+						}					
+						lastCheckedID=category.categoryID;
 					})
 					if(!checkSelectedNotModified || !checkModifications){
 						e.preventDefault();
@@ -194,6 +201,7 @@
 								let categoryIDOfDrop = parseInt(e.target.id);
 								
 								//other check, always important to preserve database integrity
+								lastCheckedID = -1;
 								self.categoriesList.forEach(function(category){
 									if(category.categoryID === categoryIDOfDrop){ //list contains the id selected
 										checkSelectedNotModified = true;
@@ -201,6 +209,12 @@
 									if(document.getElementById(category.categoryID)===null){ //something was modified
 										checkModifications = false;
 									}
+									if(lastCheckedID !== -1){ //all elements but the first
+										if(parseInt(document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling.id) !== category.categoryID){
+											checkModifications=false;
+										}
+									}					
+									lastCheckedID=category.categoryID;
 								})
 								if(!checkSelectedNotModified || !checkModifications){
 									alert("There was a problem during the drag & drop, try again!");
@@ -236,13 +250,20 @@
 				span.addEventListener('click', (e) => {
 					let clickedCategoryID = parseInt(e.target.id);
 					let check = false;
+					let checkModifications = true;
+					let lastCheckedID = -1;
 					self.categoriesList.forEach(function(category){
 						if(category.categoryID === clickedCategoryID) {
 							check = true;
-							return;
 						}
+						if(lastCheckedID !== -1){ //all elements but the first
+							if(parseInt(document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling.id) !== category.categoryID){
+								checkModifications = false;
+							}
+						}					
+						lastCheckedID = category.categoryID;
 					});
-					if(!check) {
+					if(!check || !checkModifications) {
 						alert("There was a problem during the name changing operation, please try again!");
 						self.createCategoriesHTML();
 						return;
@@ -266,10 +287,8 @@
 					}, true);
 					inputArea.focus();
 					inputArea.addEventListener('focusout', (e) => {
-						console.log("CALLED FOCUS OUT")
 						let newName = inputArea.value;
 						if(newName === null || newName === oldName) {
-							console.log("ENTRATO IF")
 							self.createCategoriesHTML();
 						}
 						else {
