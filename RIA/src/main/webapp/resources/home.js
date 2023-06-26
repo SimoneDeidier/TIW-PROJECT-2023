@@ -51,14 +51,15 @@
 					switch(x.status) {
 						case 200: {
 							let temp = JSON.parse(response);
+							if(temp === null){
+								self.noCategoriesYetMessage.textContent = "There are no categories yet! Please insert a new one with the form!";
+								createCategoryForm.refresh(self.categoriesList);//it also manages the refresh of createCategoryForm 
+								return;
+							}
 							self.categoriesList=[]; //emptying the list
 							temp.forEach(function(category){
 								self.categoriesList.push(new Category(parseInt(category.categoryID),category.name,parseInt(category.parentID)));
 							});
-							if(self.categoriesList.length === 0) {
-								self.noCategoriesYetMessage.textContent = "There are no categories yet! Please insert a new one with the form below!";
-								return
-							}
 							self.noCategoriesYetMessage.textContent = "";
 							self.createCategoriesHTML();
 							createCategoryForm.refresh(self.categoriesList);//it also manages the refresh of createCategoryForm 
@@ -116,7 +117,6 @@
 					let checkModifications = true;
 					let lastCheckedID = -1;
 					self.categoriesList.forEach(function(category){
-						// TODO samu check se questo serve ancora
 						if(category.categoryID === categoryIDBeingDragged){ 
 							checkSelectedNotModified = true;
 						}
@@ -512,13 +512,14 @@
 			option.text = "root";
 			option.value = "root";
 			self.parentIDCreation.appendChild(option);
-			
-			list.forEach(function(category) {
-				option = document.createElement("option");
-				option.text = category.categoryID;
-				option.value = category.categoryID;
-				self.parentIDCreation.appendChild(option);
-			});
+			if(list !== null){
+				list.forEach(function(category) {
+					option = document.createElement("option");
+					option.text = category.categoryID;
+					option.value = category.categoryID;
+					self.parentIDCreation.appendChild(option);
+				});
+			}
 			if(self.createCategoryForm.classList.contains('hide')){
 				self.createCategoryForm.classList.replace('hide', 'box');
 			}
