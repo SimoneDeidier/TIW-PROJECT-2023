@@ -7,8 +7,11 @@ Progetto}\label{tecnologie-informatiche-per-il-web---documentazione-progetto}}
 
 Documentazione relativa al progetto finale del corso
 ``\textbf{Tecnologie Informatiche per il Web}'', professore Fraternali
-Piero. Studenti De Ciechi Samuele e Deidier Simone, gruppo 9. Questo
-file contiene la documentazione relativa sia al progetto
+Piero.
+
+Studenti De Ciechi Samuele e Deidier Simone, gruppo 9.
+
+Questo file contiene la documentazione relativa sia al progetto
 \emph{Pure-HTML} sia al progetto \emph{Rich Iternet Application}.
 
 \emph{Anno Accademico 2022/2023}
@@ -25,22 +28,25 @@ immagini satellitari e una tassonomia di classificazione utile per
 etichettare immagini allo scopo di consentire la ricerca per categoria.
 Dopo il login, l'utente accede a una pagina \emph{HOME} in cui compare
 un albero gerarchico di categorie. Le categorie non dipendono
-dall'utente e sono in comune tra tutti gli utenti. L'utente può inserire
-una nuova categoria nell'albero. Per fare ciò usa una form nella pagina
-\emph{HOME} in cui specifica il nome della nuova categoria e sceglie la
-categoria padre. L'invio della nuova categoria comporta l'aggiornamento
-dell'albero: la nuova categoria è appesa alla categoria padre come
-ultimo sottoelemento. Alla nuova categoria viene assegnato un codice
-numerico che ne riflette la posizione. Dopo la creazione di una
-categoria, la pagina \emph{HOME} mostra l'albero aggiornato. Per
-velocizzare la costruzione della tassonomia l'utente può copiare un
-intero sottoalbero in una data posizione: per fare ciò clicca sul link
-``\emph{copia}'' associato alla categoria radice del sottoalbero da
-copiare. A seguito di tale azione l'applicazione mostra, sempre nella
-\emph{HOME} page, l'albero con evidenziato il sottoalbero da copiare:
-tutte le altre categorie hanno un link ``\emph{copia qui}''. La
-selezione di un link ``\emph{copia qui}'' comporta l'inserimento di una
-copia del sottoalbero come ultimo figlio della categoria destinazione.
+dall'utente e sono in comune tra tutti gli utenti.
+
+L'utente può inserire una nuova categoria nell'albero. Per fare ciò usa
+una form nella pagina \emph{HOME} in cui specifica il nome della nuova
+categoria e sceglie la categoria padre. L'invio della nuova categoria
+comporta l'aggiornamento dell'albero: la nuova categoria è appesa alla
+categoria padre come ultimo sottoelemento. Alla nuova categoria viene
+assegnato un codice numerico che ne riflette la posizione. Dopo la
+creazione di una categoria, la pagina \emph{HOME} mostra l'albero
+aggiornato. Per velocizzare la costruzione della tassonomia l'utente può
+copiare un intero sottoalbero in una data posizione: per fare ciò clicca
+sul link ``\emph{copia}'' associato alla categoria radice del
+sottoalbero da copiare. A seguito di tale azione l'applicazione mostra,
+sempre nella \emph{HOME} page, l'albero con evidenziato il sottoalbero
+da copiare: tutte le altre categorie hanno un link ``\emph{copia qui}''.
+La selezione di un link ``\emph{copia qui}'' comporta l'inserimento di
+una copia del sottoalbero come ultimo figlio della categoria
+destinazione.
+
 Per semplicità si ipotizzi che per ogni categoria il numero massimo di
 sottocategorie sia 9, numerate da 1 a 9. In questo caso l'operazione di
 copia deve controllare che lo spostamento non determini un numero di
@@ -62,13 +68,15 @@ etichettare immagini allo scopo di consentire la ricerca per categoria.
 Dopo il login (\(\implies\) \emph{username e password}), l'utente accede
 a una pagina HOME in cui compare un albero gerarchico di
 \textbf{categorie}. \textbf{\emph{Le categorie non dipendono dall'utente
-e sono in comune tra tutti gli utenti}}. L'utente può inserire una nuova
-categoria nell'albero. Per fare ciò usa una form nella pagina HOME in
-cui specifica il nome della nuova categoria e sceglie la \emph{categoria
-padre}. L'invio della nuova categoria comporta l'aggiornamento
-dell'albero: la nuova categoria è appesa alla categoria padre come
-ultimo sottoelemento. Alla nuova categoria viene assegnato un
-\emph{codice numerico} che ne riflette la posizione\ldots{}
+e sono in comune tra tutti gli utenti}}.
+
+L'utente può inserire una nuova categoria nell'albero. Per fare ciò usa
+una form nella pagina HOME in cui specifica il nome della nuova
+categoria e sceglie la \emph{categoria padre}. L'invio della nuova
+categoria comporta l'aggiornamento dell'albero: la nuova categoria è
+appesa alla categoria padre come ultimo sottoelemento. Alla nuova
+categoria viene assegnato un \emph{codice numerico} che ne riflette la
+posizione\ldots{}
 
 \hypertarget{diagramma-er-relativo-al-database}{%
 \paragraph{Diagramma ER relativo al
@@ -109,6 +117,7 @@ Abbiamo deciso di utilizzare \emph{bigint} per \emph{categoryID} e
 \emph{parentID} così da permettere una maggiore libertà agli utenti nel
 creare diversi annidamenti di categorie, rispetto alla quantità di
 sottocategorie che avrebbero potuto creare con un semplice \emph{int}.
+
 Abbiamo inoltre scelto di non mettere una tabella intermedia fra le due
 categorie. Questo è dovuto al fatto che tutti gli utenti possono vedere
 tutte le categorie e quindi non c'è motivo di tenere traccia di chi crea
@@ -125,8 +134,9 @@ satellitari e una tassonomia di classificazione utile per etichettare
 immagini allo scopo di consentire la ricerca per categoria. \emph{Dopo
 il login}, \textbf{\emph{l'utente accede a una pagina}} HOME in cui
 compare un \textbf{albero gerarchico di categorie.} Le categorie non
-dipendono dall'utente e sono in comune tra tutti gli utenti. L'utente
-può inserire una nuova categoria nell'albero. Per fare ciò usa
+dipendono dall'utente e sono in comune tra tutti gli utenti.
+
+L'utente può inserire una nuova categoria nell'albero. Per fare ciò usa
 \textbf{una form} nella pagina HOME in cui specifica il nome della nuova
 categoria e sceglie la categoria padre. \textbf{\emph{L'invio della
 nuova categoria}} comporta l'aggiornamento dell'albero: \emph{la nuova
@@ -141,14 +151,15 @@ azione l'applicazione mostra, sempre nella HOME page, l'albero con
 evidenziato il sottoalbero da copiare: tutte le altre categorie hanno un
 link ``\textbf{copia qui}'' \emph{\textbf{La selezione di un link
 ``copia qui''} comporta l'inserimento di una copia del sottoalbero come
-ultimo figlio della categoria destinazione}. Per semplicità si ipotizzi
-che per ogni categoria il numero massimo di sottocategorie sia 9,
-numerate da 1 a 9. In questo caso l'operazione di copia deve controllare
-che lo spostamento non determini un numero di sottocategorie superiore a
-9. Si preveda anche un \textbf{link ``copia qui'' non associato a un
-nodo della tassonomia} \emph{che permette di copiare un sotto-albero al
-primo livello della tassonomia} (se non esistono già 9 nodi al primo
-livello della tassonomia).
+ultimo figlio della categoria destinazione}.
+
+Per semplicità si ipotizzi che per ogni categoria il numero massimo di
+sottocategorie sia 9, numerate da 1 a 9. In questo caso l'operazione di
+copia deve controllare che lo spostamento non determini un numero di
+sottocategorie superiore a 9. Si preveda anche un \textbf{link ``copia
+qui'' non associato a un nodo della tassonomia} \emph{che permette di
+copiare un sotto-albero al primo livello della tassonomia} (se non
+esistono già 9 nodi al primo livello della tassonomia).
 
 \begin{itemize}
 \tightlist
