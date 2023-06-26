@@ -331,7 +331,7 @@
 			});
 		}
 		
-		this.showTemporaryList = function(categoriesToAddList,categoryID,parentID){
+		this.showTemporaryList = function(categoriesToAddList){
 			var self=this;
 			self.categoriesContainerDiv.innerHTML = "";
 			self.categoriesList.forEach(function(category) {
@@ -366,8 +366,6 @@
 			button.addEventListener('click',(e)=>{
 				let data = new FormData();
 				data.append("jsonData",JSON.stringify(categoriesToAddList));
-				data.append("categoryID",categoryID);
-				data.append("parentID",parentID);
 				makeCallReady("POST", 'InsertCopiedCategory', data, function(x){
 						if(x.readyState === XMLHttpRequest.DONE) {
 							let response = x.responseText;
