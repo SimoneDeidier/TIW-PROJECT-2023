@@ -2,7 +2,7 @@ title Event: Logout
 
 activate Home
 activate Logout
-note over Home:POST\n/Logout
+note over Home:GET\n/Logout
 Home->Logout:doPOST
 deactivate Home
 activate Session

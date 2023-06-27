@@ -7,9 +7,12 @@ deactivate Servlet
 activate CategoriesDAO
 GoToHome->CategoriesDAO:new CategoriesDAO()
 GoToHome->CategoriesDAO:findAllCategories()
-CategoriesDAO->GoToHome:allCategories
+CategoriesDAO->GoToHome:list
+activate Session
+GoToHome->Session: getAttribute(username)
+Session->GoToHome: userName
+deactivate Session
 activate ctx
 activate Template Engine
-note over GoToHome,Template Engine:Da rivedere dopo che abbiamo visto il video su Thymeleaf!!!
-GoToHome->ctx:setVariable(allCategories)
+GoToHome->ctx:setVariable(categoryList, idList, user copyLink)
 GoToHome->Template Engine:process(ctx, "Home.html", ..)

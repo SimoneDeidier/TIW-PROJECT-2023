@@ -1,0 +1,12 @@
+title Event: InsertCopiedCategory
+
+activate CopyHerePage
+activate InsertCopiedCategory
+note over CopyHerePage:GET\n/InsertCopiedCategory\ncategoryID\nparentID
+CopyHerePage->InsertCopiedCategory:doPOST
+activate CategoriesDAO
+InsertCopiedCategory->CategoriesDAO:new CategoriesDAO()
+InsertCopiedCategory->CategoriesDAO:                insertCopiedCategory(categoryID, parentID)
+deactivate CategoriesDAO
+activate GoToHome
+InsertCopiedCategory->GoToHome:redirect

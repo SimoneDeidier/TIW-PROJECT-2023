@@ -1,0 +1,36 @@
+title Event: CopyCategory
+
+participant Home
+participant GoToHome
+
+participant CopyCategory
+participant CategoriesDAO
+participant Session
+
+participant ctx
+participant Template Engine
+
+
+activate Home
+activate CopyCategory
+note over Home:GET\n/CopyCategory\ncategoryID
+Home->CopyCategory:doPOST
+activate CategoriesDAO
+CopyCategory->CategoriesDAO:new CategoriesDAO()
+CopyCategory->CategoriesDAO:parameterOk = checkExistingCategoryFromID(categoryID)
+activate GoToHome
+CopyCategory->GoToHome:[parameterOk == false] redirect
+deactivate GoToHome
+CopyCategory->CategoriesDAO:[parameterOk == true] findAllCategories()
+CategoriesDAO->CopyCategory:categoriesList
+CopyCategory->CategoriesDAO:toCopyList(categoryID)
+CategoriesDAO->CopyCategory:toCopyList
+deactivate CategoriesDAO
+activate Session
+CopyCategory->Session: getAttribute(username)
+Session->CopyCategory: username
+deactivate Session
+activate ctx
+CopyCategory->ctx:setVariable(user, categoriesList, isToCopyMap, copyLink, categoryID)
+activate Template Engine
+CopyCategory->Template Engine: process(ctx, "CopyHerePage.html", ..)

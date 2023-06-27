@@ -7,11 +7,11 @@ index.html->CheckLogin:  doPOST
 activate UserDAO
 CheckLogin->UserDAO:new UserDAO()
 CheckLogin->UserDAO:checkLogin(username, password)
-UserDAO->CheckLogin:username || null
+UserDAO->CheckLogin:user || null
 deactivate UserDAO
-CheckLogin->index.html:[username == null] redirect
+CheckLogin->index.html:[user == null] redirect
 activate Session
-CheckLogin->Session:[username != null] setAttribute("username" : username)
+CheckLogin->Session:[user != null] setAttribute("username" : username)
 activate GoToHome
 CheckLogin->GoToHome:redirect
 deactivate CheckLogin
