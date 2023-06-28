@@ -1,0 +1,26 @@
+title Event: Home load
+
+activate Home.html + home.js (C)
+activate PageOrchestrator (C)
+Home.html + home.js (C)->PageOrchestrator (C):start()
+activate CreateCategoryForm (C)
+PageOrchestrator (C)->CreateCategoryForm (C):register events
+activate LogoutManager
+PageOrchestrator (C)->LogoutManager:register events
+deactivate LogoutManager
+Home.html + home.js (C)->PageOrchestrator (C):refresh()
+activate CategoriesContainer (C)
+PageOrchestrator (C)->CategoriesContainer (C):update()
+activate GetCategories (S)
+CategoriesContainer (C)->GetCategories (S):AJAX GET
+activate CategoriesDAO (S)
+GetCategories (S)->CategoriesDAO (S):findAllCategories()
+CategoriesDAO (S)->GetCategories (S):categoriesList
+deactivate CategoriesDAO (S)
+GetCategories (S)-->>CategoriesContainer (C):response
+deactivate GetCategories (S)
+CategoriesContainer (C)->CategoriesContainer (C):[size == 0]\nset message
+CategoriesContainer (C)->CategoriesContainer (C):[size != 0]\ncreateCategoriesHTML()\nregister events
+CategoriesContainer (C)->CreateCategoryForm (C):refresh()
+deactivate CategoriesContainer (C)
+CreateCategoryForm (C)->CreateCategoryForm (C):add form\noptions

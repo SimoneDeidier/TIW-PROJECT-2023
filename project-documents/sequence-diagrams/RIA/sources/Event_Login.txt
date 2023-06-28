@@ -1,0 +1,29 @@
+title Event: Login
+
+activate user
+activate index.html + loginPage.js (C)
+user->index.html + loginPage.js (C):click button
+deactivate user
+activate CheckLogin (S)
+index.html + loginPage.js (C)->CheckLogin (S):AJAX POST\nusername, password
+
+activate UserDAO (S)
+CheckLogin (S)->UserDAO (S):new UserDAO()
+CheckLogin (S)->UserDAO (S):checkLogin(username, password)
+UserDAO (S)->CheckLogin (S):user || null
+deactivate UserDAO (S)
+CheckLogin (S)-->>index.html + loginPage.js (C):[username == null ||\npassword == null]\nstatus 400
+CheckLogin (S)-->>index.html + loginPage.js (C):[User == null]\nstatus 401
+CheckLogin (S)-->>index.html + loginPage.js (C):[server err]\nstatus 500
+activate Session (S)
+parallel on
+CheckLogin (S)->Session (S):[user != null] setAttribute("username" : username)
+deactivate Session (S)
+CheckLogin (S)-->>index.html + loginPage.js (C):[User != null]\nstatus 200
+deactivate CheckLogin (S)
+parallel off
+activate SessionStorage (C)
+index.html + loginPage.js (C)->SessionStorage (C):setItem('username', response)
+deactivate SessionStorage (C)
+activate Window (C)
+index.html + loginPage.js (C)->Window (C):location = Home.html

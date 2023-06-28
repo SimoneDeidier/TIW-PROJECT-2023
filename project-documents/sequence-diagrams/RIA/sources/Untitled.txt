@@ -1,0 +1,13 @@
+title Event: Create category
+
+activate user
+activate CreateCategoryForm (C)
+user->CreateCategoryForm (C):click button
+activate CreateCategory (S)
+CreateCategoryForm (C)->CreateCategory (S):AJAX POST\nname, parentID
+activate CategoriesDAO (S)
+CreateCategory (S)->CategoriesDAO (S):createCategory(name, parentID)
+CategoriesDAO (S)->CreateCategory (S):creationOk
+deactivate CategoriesDAO (S)
+CreateCategory (S)-->>CreateCategoryForm (C):[creationOk == false]\nstatus 400
+CreateCategory (S)-->>CreateCategoryForm (C):[creationOk == true]\nstatus 200
