@@ -478,7 +478,6 @@
 							
 							switch(x.status) {
 								case 200: {
-									pageOrchestrator.refresh();
 									break;
 								}
 								case 400: {
@@ -494,6 +493,7 @@
 									 break;
 								 }
 							}
+							pageOrchestrator.refresh();
 						}
 					});
 				}
