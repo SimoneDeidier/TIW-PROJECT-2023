@@ -123,7 +123,7 @@
 						if(document.getElementById(category.categoryID) === null){
 							checkModifications = false;
 						}
-						if(lastCheckedID !== -1 && checkModifications){ //all elements but the first
+						if(lastCheckedID !== -1 && checkModifications && document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling !== null){ //all elements but the first
 							if(parseInt(document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling.id) !== category.categoryID){
 								checkModifications=false;
 							}
@@ -209,7 +209,7 @@
 									if(document.getElementById(category.categoryID)===null){ //something was modified
 										checkModifications = false;
 									}
-									if(lastCheckedID !== -1 && checkModifications){ //all elements but the first
+									if(lastCheckedID !== -1 && checkModifications && document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling !== null){ //all elements but the first
 										if(parseInt(document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling.id) !== category.categoryID){
 											checkModifications=false;
 										}
@@ -259,9 +259,9 @@
 						if(document.getElementById(category.categoryID)===null){ //something was modified
 							checkModifications = false;
 						}
-						if(lastCheckedID !== -1 && checkModifications){ //all elements but the first
+						if(lastCheckedID !== -1 && checkModifications && document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling !== null){ //all elements but the first
 							if(parseInt(document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling.id) !== category.categoryID){
-								checkModifications = false;
+								checkModifications=false;
 							}
 						}					
 						lastCheckedID = category.categoryID;
