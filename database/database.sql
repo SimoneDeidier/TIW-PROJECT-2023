@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `tiw_project` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+qCREATE DATABASE  IF NOT EXISTS `tiw_project` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `tiw_project`;
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.31, for macos12 (x86_64)
 --
--- Host: localhost    Database: tiw_project
+-- Host: 127.0.0.1    Database: tiw_project
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	8.0.32
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -28,7 +28,9 @@ CREATE TABLE `category` (
   `categoryID` bigint NOT NULL,
   `name` varchar(45) NOT NULL,
   `parentID` bigint DEFAULT NULL,
-  PRIMARY KEY (`categoryID`)
+  PRIMARY KEY (`categoryID`),
+  KEY `parentID_idx` (`parentID`),
+  CONSTRAINT `FK1` FOREIGN KEY (`parentID`) REFERENCES `category` (`categoryID`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -38,7 +40,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'Materiali ferrosi',0);
+INSERT INTO `category` VALUES (1,'Materiali ferrosi',NULL),(2,'Materiali plastici',NULL),(3,'Materiali vitrei',NULL),(11,'Ferro grezzo',1);
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,7 +64,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES ('root','password');
+INSERT INTO `user` VALUES ('root','password'),('user','password');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,4 +81,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-26 20:46:05
+-- Dump completed on 2023-07-01  0:42:30

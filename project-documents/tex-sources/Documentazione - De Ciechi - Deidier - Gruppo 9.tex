@@ -15,7 +15,7 @@ Studenti \href{https://github.com/Samdec01}{De Ciechi Samuele} e
 \href{https://github.com/SimoneDeidier}{Deidier Simone}, gruppo 9.
 
 Questo file contiene la documentazione relativa sia al progetto
-\emph{Pure-HTML} sia al progetto \emph{Rich Iternet
+\emph{Pure-HTML} sia al progetto \emph{Rich Internet
 Application}.\newline\newline\newline
 
 \emph{Anno Accademico 2022/2023}
@@ -88,7 +88,7 @@ posizione\ldots{}
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Screenshot 2023-06-26 alle 23.25.59.png}
+\includegraphics{../../../../_resources/diagrammaER.png}
 \caption{\emph{Diagramma E-R del database utilizzato}}
 \end{figure}
 
@@ -104,7 +104,9 @@ MySQLWorkbench}\label{creazione-del-database-in-mysqlworkbench}}
 \NormalTok{  categoryID bigint }\KeywordTok{NOT} \KeywordTok{NULL}\NormalTok{,}
 \NormalTok{  name }\DataTypeTok{varchar}\NormalTok{(}\DecValTok{45}\NormalTok{) }\KeywordTok{NOT} \KeywordTok{NULL}\NormalTok{,}
 \NormalTok{  parentID bigint }\KeywordTok{DEFAULT} \KeywordTok{NULL}\NormalTok{,}
-  \KeywordTok{PRIMARY} \KeywordTok{KEY}\NormalTok{ (categoryID)}
+  \KeywordTok{PRIMARY} \KeywordTok{KEY}\NormalTok{ (categoryID),}
+  \KeywordTok{FOREIGN} \KeywordTok{KEY}\NormalTok{ (parentID) }\KeywordTok{REFERENCES} \KeywordTok{Category}\NormalTok{ (categoryID)}
+  \KeywordTok{ON} \KeywordTok{UPDATE} \KeywordTok{CASCADE} \KeywordTok{ON} \KeywordTok{DELETE} \KeywordTok{NO}\NormalTok{ ACTION}
 \NormalTok{)}
 
 \KeywordTok{CREATE} \KeywordTok{TABLE} \FunctionTok{User}\NormalTok{ (}
@@ -195,8 +197,6 @@ View components & Events & Action \\
 \includegraphics{../../../../_resources/IFML - login.jpeg}
 \caption{\emph{Diagramma IFML della pagina LOGIN.}}
 \end{figure}
-
-\pagebreak
 
 \begin{figure}
 \centering
