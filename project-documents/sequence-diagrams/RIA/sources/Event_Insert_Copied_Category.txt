@@ -1,0 +1,29 @@
+title Event: Insert Copied Category - Drag&Drop
+
+activate user
+activate CategoriesContainer (C)
+user->CategoriesContainer (C): drag
+CategoriesContainer (C)->CategoriesContainer (C):checks &&\nselect categories\nto copy
+user->CategoriesContainer (C):drop
+CategoriesContainer (C)->CategoriesContainer (C):checks &&\nshow updated list
+CategoriesContainer (C)->user:confirm?
+user->CategoriesContainer (C):[confirmed]
+activate confirmation box (C)
+CategoriesContainer (C)->confirmation box (C):create HTML elements\nregister event
+user->confirmation box (C):click
+activate InsertCopiedCategory (S)
+confirmation box (C)->InsertCopiedCategory (S):AJAX POST\ncategoriesToAddList
+deactivate confirmation box (C)
+activate CategoriesDAO (S)
+InsertCopiedCategory (S)->CategoriesDAO (S):new CategoriesDAO()
+InsertCopiedCategory (S)->CategoriesDAO (S):findAllCategories()
+CategoriesDAO (S)->InsertCopiedCategory (S):allCategoryList
+InsertCopiedCategory (S)->CategoriesDAO (S):insertCopiedCategory(categoriesToAddList)
+deactivate CategoriesDAO (S)
+InsertCopiedCategory (S)-->>CategoriesContainer (C):[invalid parameters]\nstatus 400
+InsertCopiedCategory (S)-->>CategoriesContainer (C):[server err]\nstatus 500
+InsertCopiedCategory (S)-->>CategoriesContainer (C):[ok]\nstatus 200
+deactivate InsertCopiedCategory (S)
+activate PageOrchestrator (C)
+CategoriesContainer (C)->PageOrchestrator (C):refresh()
+note over PageOrchestrator (C):refresh function same\nas the Home loading.

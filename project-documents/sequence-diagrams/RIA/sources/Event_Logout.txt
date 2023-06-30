@@ -1,0 +1,17 @@
+title Event: Logout
+
+activate user
+activate LogoutManager (C)
+user->LogoutManager (C):click
+activate Logout (S)
+LogoutManager (C)->Logout (S):AJAX GET
+activate Session (S)
+Logout (S)->Session (S):invalidate()
+deactivate Session (S)
+Logout (S)-->LogoutManager (C):[ok]\nstatus 200
+deactivate Logout (S)
+activate SessionStorage (C)
+LogoutManager (C)->SessionStorage (C):removeItem(username)
+deactivate SessionStorage (C)
+activate Window (C)
+LogoutManager (C)->Window (C):locate index.html

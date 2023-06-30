@@ -1,0 +1,12 @@
+title Event: Register New User
+
+activate index.html
+activate RegisterNewUser
+note over index.html:POST\n/RegisterNewUser\nusername\npassword
+index.html->RegisterNewUser:  doPOST
+activate UserDAO
+RegisterNewUser->UserDAO:new UserDAO()
+RegisterNewUser->UserDAO:registerNewUser(username, password)
+UserDAO->RegisterNewUser:registration
+deactivate UserDAO
+RegisterNewUser->index.html:redirect and show msg

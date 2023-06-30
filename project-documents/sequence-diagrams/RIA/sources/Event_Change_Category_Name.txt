@@ -1,0 +1,20 @@
+title Event: Change Category Name
+
+activate user
+activate CategoriesContainer (C)
+user->CategoriesContainer (C):click
+CategoriesContainer (C)->CategoriesContainer (C):change HTML\ncreate text input
+user->CategoriesContainer (C):focus out
+activate ChangeCategoryID (S)
+CategoriesContainer (C)->ChangeCategoryID (S):AJAX POST\nchangedID, newname
+activate CategoriesDAO (S)
+ChangeCategoryID (S)->CategoriesDAO (S):new CategoriesDAO()
+ChangeCategoryID (S)->CategoriesDAO (S):changeCategoryName(changedID, newName)
+deactivate CategoriesDAO (S)
+ChangeCategoryID (S)-->>CategoriesContainer (C):[invalid param]\nstatus 400
+ChangeCategoryID (S)-->>CategoriesContainer (C):[server err]\nstatus 500
+ChangeCategoryID (S)-->>CategoriesContainer (C):[ok]\nstatus 200
+deactivate ChangeCategoryID (S)
+activate PageOrchestrator (C)
+CategoriesContainer (C)->PageOrchestrator (C):refresh()
+note over PageOrchestrator (C):refresh function same\nas the Home loading.

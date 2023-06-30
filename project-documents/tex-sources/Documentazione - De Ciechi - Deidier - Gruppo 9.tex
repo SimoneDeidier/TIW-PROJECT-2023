@@ -88,7 +88,7 @@ posizione\ldots{}
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Screenshot 2023-06-26 alle 23.25.59-18.png}
+\includegraphics{../../../../_resources/Screenshot 2023-06-26 alle 23.25.59.png}
 \caption{\emph{Diagramma E-R del database utilizzato}}
 \end{figure}
 
@@ -192,13 +192,15 @@ View components & Events & Action \\
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/IFML - login-18.png}
-\caption{\emph{Diagramma IFML del login.}}
+\includegraphics{../../../../_resources/IFML - login.jpeg}
+\caption{\emph{Diagramma IFML della pagina LOGIN.}}
 \end{figure}
+
+\pagebreak
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/IFML - v.0.1-18.jpg}
+\includegraphics{../../../../_resources/IFML - HOME - pure-html.jpeg}
 \caption{\emph{Diagramma IFML della pagina HOME.}}
 \end{figure}
 
@@ -307,8 +309,20 @@ Login}{Sequence Diagrams: Evento Login}}\label{sequence-diagrams-evento-login}}
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Event_Login-18.png}
+\includegraphics{../../../../_resources/Event_Login-1.png}
 \caption{\emph{Sequence diagram dell'evento Login.}}
+\end{figure}
+
+\pagebreak
+
+\hypertarget{sequence-diagrams-evento-registernewuser}{%
+\subsubsection{\texorpdfstring{\emph{Sequence Diagrams}: Evento
+RegisterNewUser}{Sequence Diagrams: Evento RegisterNewUser}}\label{sequence-diagrams-evento-registernewuser}}
+
+\begin{figure}
+\centering
+\includegraphics{../../../../_resources/Event_Register_New_User-1.png}
+\caption{\emph{Sequence diagram dell'evento RegisterNewUser.}}
 \end{figure}
 
 \pagebreak
@@ -319,7 +333,7 @@ GoToHome}{Sequence Diagrams: Evento GoToHome}}\label{sequence-diagrams-evento-go
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Event_GoToHome-18.png}
+\includegraphics{../../../../_resources/Event_GoToHome.png}
 \caption{\emph{Sequence diagram dell'evento GoToHome.}}
 \end{figure}
 
@@ -331,7 +345,7 @@ CreateCategory}{Sequence Diagrams: Evento CreateCategory}}\label{sequence-diagra
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Event_CreateCategory-18.png}
+\includegraphics{../../../../_resources/Event_CreateCategory.png}
 \caption{\emph{Sequence diagram dell'evento CreateCategory.}}
 \end{figure}
 
@@ -343,7 +357,7 @@ CopyCategory}{Sequence Diagrams: Evento CopyCategory}}\label{sequence-diagrams-e
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Event_CopyCategory-18.png}
+\includegraphics{../../../../_resources/Event_CopyCategory.png}
 \caption{\emph{Sequence diagram dell'evento CopyCategory.}}
 \end{figure}
 
@@ -355,7 +369,7 @@ InsertCopiedCategory}{Sequence Diagrams: Evento InsertCopiedCategory}}\label{seq
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Event_InsertCopiedCategory-18.png}
+\includegraphics{../../../../_resources/Event_InsertCopiedCategory.png}
 \caption{\emph{Sequence diagram dell'evento InsertCopiedCategory.}}
 \end{figure}
 
@@ -367,7 +381,7 @@ Logout}{Sequence Diagrams: Evento Logout}}\label{sequence-diagrams-evento-logout
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Event_Logout-18.png}
+\includegraphics{../../../../_resources/Event_Logout-1.png}
 \caption{\emph{Sequence diagram dell'evento Logout.}}
 \end{figure}
 
@@ -418,7 +432,7 @@ dell'applicazione}\label{design-dellapplicazione-1}}
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/PHOTO-2023-06-25-19-11-05-18.jpg}
+\includegraphics{../../../../_resources/PHOTO-2023-06-25-19-11-05.jpg}
 \caption{\emph{Diagramma IFML della pagina HOME - versione RIA.}}
 \end{figure}
 
@@ -429,7 +443,7 @@ dell'applicazione}\label{design-dellapplicazione-1}}
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Screenshot 2023-06-27 alle 00.20.30-18.png}
+\includegraphics{../../../../_resources/Screenshot 2023-06-27 alle 00.20.30.png}
 \caption{\emph{Tabella degli Eventi e delle Azioni.}}
 \end{figure}
 
@@ -441,7 +455,7 @@ Handler}}{Controller - Event Handler}}\label{controller---event-handler}}
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Screenshot 2023-06-27 alle 00.18.00-18.png}
+\includegraphics{../../../../_resources/Screenshot 2023-06-27 alle 00.18.00.png}
 \caption{\emph{Tabella del Controller - Event Handler.}}
 \end{figure}
 
@@ -453,7 +467,7 @@ Dynamics}}{Event e View Dynamics}}\label{event-e-view-dynamics}}
 
 \begin{figure}
 \centering
-\includegraphics{../../../../_resources/Screenshot 2023-06-27 alle 00.24.23-18.png}
+\includegraphics{../../../../_resources/Screenshot 2023-06-27 alle 00.24.23.png}
 \caption{\emph{Event \& View Dynamics.}}
 \end{figure}
 
@@ -550,10 +564,160 @@ side}{DAO e Model Objects - server side}}\label{dao-e-model-objects---server-sid
 client
 side}{View e View Components - client side}}\label{view-e-view-components---client-side}}
 
-TODO (???)
+\emph{index.html + loginPage.js}:
 
-\hypertarget{sequence-diagrams}{%
-\subsubsection{\texorpdfstring{\emph{Sequence
-Diagrams}:}{Sequence Diagrams:}}\label{sequence-diagrams}}
+\begin{itemize}
+\tightlist
+\item
+  Login form \(\implies\) gestione \emph{evento submit} per effettuare
+  il login e gli eventuali errori.
+\item
+  Registration form \(\implies\) gestione \emph{evento submit} per
+  registrare un nuovo utente ed eventuali errori.
+\end{itemize}
 
-TODO
+\emph{home.html + home.js}:
+
+\begin{itemize}
+\tightlist
+\item
+  CategoriesContainer
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \emph{update()} \(\implies\) richiede al server la lista di
+    categorie nel database.
+  \item
+    \emph{orderList()} \(\implies\) riordina per la visualizzazione una
+    lista di cateogire non ordinata.
+  \item
+    \emph{createCategoriesHTML()} \(\implies\) crea gli elementi HTML
+    per la visualizzazione delle categorie, registra tutti gli eventi
+    dei componenti HTML (\emph{drag\&drop, cambio del nome con il
+    click}).
+  \item
+    \emph{showTemporaryList()} \(\implies\) aggiorna a schermo la lista
+    di categorie \textbf{dopo l'evento drag\&drop} e gestisce anche la
+    creazione del \emph{button} per salvare le modifiche al database.
+  \item
+    \emph{getListOfNewCategories()} \(\implies\) calcola gli \emph{ID}
+    degli elementi copiati tramite funzione \emph{drag\&drop}, gestendo
+    eventuali errori.
+  \item
+    \emph{findLastChildrenID()} \(\implies\) restituisce l'ID
+    dell'ultimo figlio dato un nodo padre.
+  \end{itemize}
+\item
+  CreateCategoryForm
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \emph{setEvent()} \(\implies\) registra l'evento relativo al
+    \emph{button} del form.
+  \item
+    \emph{refresh()} \(\implies\) riaggiorna le opzioni disponibili nel
+    form per la creazione di una nuova categoria scegliendo la categoria
+    padre.
+  \end{itemize}
+\item
+  LogoutManager
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \emph{setEvent()} \(\implies\) registra l'evento relativo
+    all'\emph{anchor} per il logout dal sito.
+  \item
+    \emph{show()} \(\implies\) imposta la visibilità del messaggio di
+    logout.
+  \end{itemize}
+\end{itemize}
+
+\pagebreak
+
+\hypertarget{sequence-diagrams-evento-login-1}{%
+\subsubsection{\texorpdfstring{\emph{Sequence Diagrams}: Evento
+Login}{Sequence Diagrams: Evento Login}}\label{sequence-diagrams-evento-login-1}}
+
+\begin{figure}
+\centering
+\includegraphics{../../../../_resources/Event_Login.png}
+\caption{\emph{Sequence diagram dell'evento Login.}}
+\end{figure}
+
+\pagebreak
+
+\hypertarget{sequence-diagrams-evento-register-new-user}{%
+\subsubsection{\texorpdfstring{\emph{Sequence Diagrams}: Evento Register
+New
+User}{Sequence Diagrams: Evento Register New User}}\label{sequence-diagrams-evento-register-new-user}}
+
+\begin{figure}
+\centering
+\includegraphics{../../../../_resources/Event_Register_New_User.png}
+\caption{\emph{Sequence diagram dell'evento RegisterNewUser.}}
+\end{figure}
+
+\pagebreak
+
+\hypertarget{sequence-diagrams-evento-home-load}{%
+\subsubsection{\texorpdfstring{\emph{Sequence Diagrams}: Evento Home
+load}{Sequence Diagrams: Evento Home load}}\label{sequence-diagrams-evento-home-load}}
+
+\begin{figure}
+\centering
+\includegraphics{../../../../_resources/Event_Home_load.png}
+\caption{\emph{Sequence diagram dell'evento Home load.}}
+\end{figure}
+
+\pagebreak
+
+\hypertarget{sequence-diagrams-evento-create-category}{%
+\subsubsection{\texorpdfstring{\emph{Sequence Diagrams}: Evento Create
+Category}{Sequence Diagrams: Evento Create Category}}\label{sequence-diagrams-evento-create-category}}
+
+\begin{figure}
+\centering
+\includegraphics{../../../../_resources/Event_Create_Category.png}
+\caption{\emph{Sequence diagram dell'evento CreateCategory.}}
+\end{figure}
+
+\pagebreak
+
+\hypertarget{sequence-diagrams-evento-insert-copied-category}{%
+\subsubsection{\texorpdfstring{\emph{Sequence Diagrams}: Evento Insert
+Copied
+Category}{Sequence Diagrams: Evento Insert Copied Category}}\label{sequence-diagrams-evento-insert-copied-category}}
+
+\begin{figure}
+\centering
+\includegraphics{../../../../_resources/Event_Insert_Copied_Category.png}
+\caption{\emph{Sequence diagram dell'evento InsertCopiedCategory.}}
+\end{figure}
+
+\pagebreak
+
+\hypertarget{sequence-diagrams-evento-change-category-name}{%
+\subsubsection{\texorpdfstring{\emph{Sequence Diagrams}: Evento Change
+Category
+Name}{Sequence Diagrams: Evento Change Category Name}}\label{sequence-diagrams-evento-change-category-name}}
+
+\begin{figure}
+\centering
+\includegraphics{../../../../_resources/Event_Change_Category_Name.png}
+\caption{\emph{Sequence diagram dell'evento ChangeCategoryName.}}
+\end{figure}
+
+\pagebreak
+
+\hypertarget{sequence-diagrams-evento-logout-1}{%
+\subsubsection{\texorpdfstring{\emph{Sequence Diagrams}: Evento
+Logout}{Sequence Diagrams: Evento Logout}}\label{sequence-diagrams-evento-logout-1}}
+
+\begin{figure}
+\centering
+\includegraphics{../../../../_resources/Event_Logout.png}
+\caption{\emph{Sequence diagram dell'evento Logout.}}
+\end{figure}

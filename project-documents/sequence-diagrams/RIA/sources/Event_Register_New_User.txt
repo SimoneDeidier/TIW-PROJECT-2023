@@ -1,0 +1,17 @@
+title Event: Register New User
+
+activate user
+activate index.html + loginPage.js (C)
+user->index.html + loginPage.js (C):click button
+activate RegisterNewUser (S)
+index.html + loginPage.js (C)->RegisterNewUser (S):AJAX POST\nusername, password
+activate UserDAO (S)
+RegisterNewUser (S)->UserDAO (S):new UserDAO()
+RegisterNewUser (S)->UserDAO (S):registerNewUser(username, password)
+deactivate UserDAO (S)
+RegisterNewUser (S)-->>index.html + loginPage.js (C):[invalid param]\nstatus 400
+RegisterNewUser (S)-->>index.html + loginPage.js (C):[registration == false]\nstatus 401
+RegisterNewUser (S)-->>index.html + loginPage.js (C):[server err]\nstatus 500
+RegisterNewUser (S)-->index.html + loginPage.js (C):[registration == true]\nstatus 200
+deactivate RegisterNewUser (S)
+index.html + loginPage.js (C)->index.html + loginPage.js (C):set username in field\nfocus on password field

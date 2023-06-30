@@ -5,15 +5,16 @@ activate PageOrchestrator (C)
 Home.html + home.js (C)->PageOrchestrator (C):start()
 activate CreateCategoryForm (C)
 PageOrchestrator (C)->CreateCategoryForm (C):register events
-activate LogoutManager
-PageOrchestrator (C)->LogoutManager:register events
-deactivate LogoutManager
+activate LogoutManager (C)
+PageOrchestrator (C)->LogoutManager (C):register events
+deactivate LogoutManager (C)
 Home.html + home.js (C)->PageOrchestrator (C):refresh()
 activate CategoriesContainer (C)
 PageOrchestrator (C)->CategoriesContainer (C):update()
 activate GetCategories (S)
 CategoriesContainer (C)->GetCategories (S):AJAX GET
 activate CategoriesDAO (S)
+GetCategories (S)->CategoriesDAO (S):new CategoriesDAO()
 GetCategories (S)->CategoriesDAO (S):findAllCategories()
 CategoriesDAO (S)->GetCategories (S):categoriesList
 deactivate CategoriesDAO (S)
