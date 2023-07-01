@@ -70,13 +70,23 @@ public class CategoriesDAO {
 			long newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
 			preparedStatement.setLong(1, newCategoryID);
 			preparedStatement.setString(2, name);
-			preparedStatement.setLong(3, parentID);
+			if(parentID == 0) {
+				preparedStatement.setNull(3, java.sql.Types.BIGINT);
+			}
+			else {
+				preparedStatement.setLong(3, parentID);
+			}
 			preparedStatement.executeUpdate();
 			return true;
 		}
 		preparedStatement.setLong(1, 1);
 		preparedStatement.setString(2, name);
-		preparedStatement.setLong(3, parentID);
+		if(parentID == 0) {
+			preparedStatement.setNull(3, java.sql.Types.BIGINT);
+		}
+		else {
+			preparedStatement.setLong(3, parentID);
+		}
 		preparedStatement.executeUpdate();
 		return true;
 	}
@@ -178,7 +188,12 @@ public class CategoriesDAO {
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		preparedStatement.setLong(1, newID);
 		preparedStatement.setString(2, name);
-		preparedStatement.setLong(3, newParentID);
+		if(newParentID == 0) {
+			preparedStatement.setNull(3, java.sql.Types.BIGINT);
+		}
+		else {
+			preparedStatement.setLong(3, newParentID);
+		}
 		preparedStatement.executeUpdate();
 	}
 	

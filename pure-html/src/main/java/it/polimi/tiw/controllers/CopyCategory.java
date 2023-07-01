@@ -96,7 +96,7 @@ public class CopyCategory extends HttpServlet {
 		try {
 			parameterOK = categoriesDAO.checkExistingCategoryFromID(categoryID);
 			if(!parameterOK) {
-				request.setAttribute("errorMessage", "Wrong category ID in the query string, please select another category!");
+				request.setAttribute("errorMessage", "There was a problem with the category ID selected, please select another category!");
 				servletContext.getRequestDispatcher("/GoToHome").forward(request, response);
 				return;	
 			}
