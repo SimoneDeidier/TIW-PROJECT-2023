@@ -25,7 +25,7 @@ public class CategoriesDAO {
 	
 	public List<Category> findAllCategories() throws SQLException {
 		List<Category> categoriesList = new ArrayList<>();
-		String query = "SELECT * FROM Category";
+		String query = "SELECT * FROM category";
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		ResultSet result = preparedStatement.executeQuery();
 		if(!result.isBeforeFirst()) {
@@ -36,7 +36,7 @@ public class CategoriesDAO {
 				Category category = new Category();
 				category.setCategoryID(result.getLong("categoryID"));
 				category.setName(result.getString("name"));
-				category.setParentID(result.getLong("parentID"));
+				category.setParentID(result.getLong("parentID"));  //gets a zero if null
 				categoriesList.add(category);
 			}
 		}
@@ -46,7 +46,7 @@ public class CategoriesDAO {
 
 	
 	public boolean createCategory(String name, long parentID) throws SQLException, TooLongIDException {
-		String query = "INSERT INTO Category VALUES (?, ?, ?)";
+		String query = "INSERT INTO category VALUES (?, ?, ?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		List<Category> categoriesList = findAllCategories();
 		List<Long> categoriesIndexesList = new ArrayList<>();
@@ -68,13 +68,23 @@ public class CategoriesDAO {
 			long newCategoryID = findLastChildrenID(categoriesList, parentID) + 1;
 			preparedStatement.setLong(1, newCategoryID);
 			preparedStatement.setString(2, name);
-			preparedStatement.setLong(3, parentID);
+			if(parentID == 0) {
+				preparedStatement.setNull(3, java.sql.Types.BIGINT);
+			}
+			else {
+				preparedStatement.setLong(3, parentID);
+			}
 			preparedStatement.executeUpdate();
 			return true;
 		}
 		preparedStatement.setLong(1, 1);
 		preparedStatement.setString(2, name);
-		preparedStatement.setLong(3, parentID);
+		if(parentID == 0) {
+			preparedStatement.setNull(3, java.sql.Types.BIGINT);
+		}
+		else {
+			preparedStatement.setLong(3, parentID);
+		}
 		preparedStatement.executeUpdate();
 		return true;
 	}
@@ -104,11 +114,16 @@ public class CategoriesDAO {
 	}
 	
 	public void addCategoryInDatabase(long newID, String name, long newParentID) throws SQLException {
-		String query = "INSERT INTO Category VALUES (?, ?, ?)";
+		String query = "INSERT INTO category VALUES (?, ?, ?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		preparedStatement.setLong(1, newID);
 		preparedStatement.setString(2, name);
-		preparedStatement.setLong(3, newParentID);
+		if(newParentID == 0) {
+			preparedStatement.setNull(3, java.sql.Types.BIGINT);
+		}
+		else {
+			preparedStatement.setLong(3, newParentID);
+		}
 		preparedStatement.executeUpdate();
 	}
 	
@@ -125,7 +140,7 @@ public class CategoriesDAO {
 	}
 	
 	public void changeCategoryName(long categoryID, String newName) throws SQLException {
-		String queryString = "UPDATE Category SET name = ? WHERE categoryID = ?";
+		String queryString = "UPDATE category SET name = ? WHERE categoryID = ?";
 		PreparedStatement preparedStatement = connection.prepareStatement(queryString);
 		preparedStatement.setString(1,  newName);
 		preparedStatement.setLong(2, categoryID);

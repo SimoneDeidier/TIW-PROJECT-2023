@@ -89,7 +89,7 @@ public class RegisterNewUser extends HttpServlet {
 			return;
 		}
 		response.setStatus(HttpServletResponse.SC_OK);
-		response.getWriter().println("Registration succesful! You can log in with the form above!");
+		response.getWriter().println("Registration succesful! You can log in with the login form!");
 	}
 	
 	public void destroy() {

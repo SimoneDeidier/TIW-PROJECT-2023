@@ -15,7 +15,6 @@
 		req.send();
 	}
 	else {
-		console.log(new FormData(formElement))
 		req.send(new FormData(formElement));
 	}
 	if (formElement !== null && reset === true) {

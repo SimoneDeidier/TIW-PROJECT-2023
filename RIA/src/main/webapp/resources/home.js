@@ -116,6 +116,7 @@
 					let checkSelectedNotModified = false;
 					let checkModifications = true;
 					let lastCheckedID = -1;
+					let lastID = self.categoriesList[self.categoriesList.length - 1].categoryID;
 					self.categoriesList.forEach(function(category){
 						if(category.categoryID === categoryIDBeingDragged){ 
 							checkSelectedNotModified = true;
@@ -129,6 +130,9 @@
 							}
 						}					
 						lastCheckedID=category.categoryID;
+						if(category.categoryID !== lastID && checkModifications && document.getElementById(category.categoryID).nextElementSibling.nextElementSibling === null){
+							checkModifications=false;
+						}
 					})
 					if(!checkSelectedNotModified || !checkModifications){
 						e.preventDefault();
@@ -213,6 +217,9 @@
 										if(parseInt(document.getElementById(lastCheckedID).nextElementSibling.nextElementSibling.id) !== category.categoryID){
 											checkModifications=false;
 										}
+									}
+									if(category.categoryID !== lastID && checkModifications && document.getElementById(category.categoryID).nextElementSibling.nextElementSibling === null){
+										checkModifications=false;
 									}					
 									lastCheckedID=category.categoryID;
 								})
@@ -252,6 +259,7 @@
 					let check = false;
 					let checkModifications = true;
 					let lastCheckedID = -1;
+					let lastID = self.categoriesList[self.categoriesList.length - 1].categoryID;
 					self.categoriesList.forEach(function(category){
 						if(category.categoryID === clickedCategoryID) {
 							check = true;
@@ -265,6 +273,9 @@
 							}
 						}					
 						lastCheckedID = category.categoryID;
+						if(category.categoryID !== lastID && checkModifications && document.getElementById(category.categoryID).nextElementSibling.nextElementSibling === null){
+							checkModifications=false;
+						}
 					});
 					if(!check || !checkModifications) {
 						alert("There was a problem during the name changing operation, please try again!");

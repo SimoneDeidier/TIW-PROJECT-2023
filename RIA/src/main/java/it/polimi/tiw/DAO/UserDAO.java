@@ -17,7 +17,7 @@ public class UserDAO {
 	}
 	
 	public User checkLogin(String username, String password) throws SQLException {
-		String query = "SELECT username, password FROM User WHERE username = ? AND password = ?";
+		String query = "SELECT username, password FROM user WHERE username = ? AND password = ?";
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		preparedStatement.setString(1, username);
 		preparedStatement.setString(2, password);
@@ -35,7 +35,7 @@ public class UserDAO {
 	}
 	
 	public boolean registerNewUser(String username, String password) throws SQLException {
-		String query = "INSERT INTO User VALUES (?, ?)";
+		String query = "INSERT INTO user VALUES (?, ?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		
 		Statement statement = connection.createStatement();
