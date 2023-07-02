@@ -33,4 +33,4 @@ deactivate Session
 activate ctx
 CopyCategory->ctx:setVariable(user, categoriesList, isToCopyMap, copyLink, categoryID)
 activate Template Engine
-CopyCategory->Template Engine: process(ctx, "CopyHerePage.html", ..)
+CopyCategory->Template Engine: process(ctx, "Home.html", ..)
