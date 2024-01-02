@@ -1,3 +1,12 @@
-# Prova Finale - Tecnologie Informatiche per il Web
+# Final Project of Information Technologies for Web Applications
 
-[Link al documento condiviso](https://docs.google.com/document/d/1kFLdYDnOYOk9vOnDSY7ngWn8ySUxdtjINQvl9FYWdQA/edit) sul drive.
+Professor: Piero Fraternali\newline
+Students:
+
+* [De Ciechi Samuele](https://github.com/Samdec01)
+* [Deidier Simone](https://github.com/SimoneDeidier)
+
+
+## Objectives
+
+The goal of the project was to apply the techniques and knowledge acquired during the course in order to implement a web application in two different forms: ***pure-html*** and ***Rich Internet Application*** (*RIA*).
